@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Loader2, AlertCircle, PlayCircle } from 'lucide-react';
@@ -13,6 +14,7 @@ const LoginPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const { login } = useAuth();
+  const { t } = useLanguage();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -27,8 +29,8 @@ const LoginPage = () => {
       console.error("Login error:", err);
       // Improve error message readability
       const message = err.message === "Database error querying schema" 
-        ? "System is initializing. Please try again in a few seconds." 
-        : (err.message || "Invalid email or password. Please try again.");
+        ? t('errors.tryAgain')
+        : (err.message || t('errors.invalidCredentials'));
       setError(message);
     } finally {
       setIsLoading(false);
@@ -44,7 +46,7 @@ const LoginPage = () => {
   return (
     <>
       <Helmet>
-        <title>Login - Ibrahim Accounting</title>
+        <title>{t('auth.loginTitle')} - {t('common.systemName')}</title>
       </Helmet>
       <div className="w-full space-y-6">
         <div className="text-center">
@@ -56,10 +58,10 @@ const LoginPage = () => {
             I
           </motion.div>
           <h2 className="mt-2 text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
-            Welcome back
+            {t('auth.welcomeBack')}
           </h2>
           <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-            Sign in to access your dashboard
+            {t('auth.signInToAccess')}
           </p>
         </div>
 
@@ -80,25 +82,25 @@ const LoginPage = () => {
         <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email address</label>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('auth.email')}</label>
               <input
                 id="email"
                 type="email"
                 required
                 className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all outline-none"
-                placeholder="name@company.com"
+                placeholder={t('auth.email')}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Password</label>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('auth.password')}</label>
               <input
                 id="password"
                 type="password"
                 required
                 className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all outline-none"
-                placeholder="••••••••"
+                placeholder={t('auth.password')}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
@@ -108,11 +110,11 @@ const LoginPage = () => {
           <div className="space-y-3">
             <Button
               type="submit"
-              className="w-full bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 text-white font-semibold py-2.5 rounded-lg shadow-md transition-all duration-200"
+              className="w-full bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 text-white font-semibold py-2.5 rounded-lg shadow-md transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98]"
               disabled={isLoading}
             >
-              {isLoading ? <Loader2 className="h-5 w-5 animate-spin mr-2" /> : null}
-              {isLoading ? 'Signing in...' : 'Sign in'}
+              {isLoading ? <Loader2 className="h-5 w-5 animate-spin ml-2 rtl:mr-2 rtl:ml-0" /> : null}
+              {isLoading ? t('auth.signingIn') : t('auth.loginButton')}
             </Button>
             
             <Button
@@ -121,15 +123,15 @@ const LoginPage = () => {
               onClick={handleDemoLogin}
               className="w-full border-orange-200 text-orange-700 hover:bg-orange-50 hover:text-orange-800 transition-colors"
             >
-              <PlayCircle className="h-4 w-4 mr-2" />
-              Fill Demo Credentials
+              <PlayCircle className="h-4 w-4 ml-2 rtl:mr-2 rtl:ml-0" />
+              {t('auth.demoButton')}
             </Button>
           </div>
 
           <div className="text-center text-sm">
-            <span className="text-gray-500">Don't have an account? </span>
+            <span className="text-gray-500">{t('auth.noAccount')} </span>
             <Link to="/register" className="font-semibold text-orange-600 hover:text-orange-500">
-              Start 30-day free trial
+              {t('auth.startTrial')}
             </Link>
           </div>
         </form>

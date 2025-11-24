@@ -66,9 +66,10 @@ function App() {
           <AuthProvider>
             <Router>
               <Helmet>
-                <title>Ibrahim Accounting System</title>
-                <meta name="description" content="Professional multi-tenant accounting system" />
+                <title>نظام إبراهيم للمحاسبة</title>
+                <meta name="description" content="نظام محاسبة متعدد المتاجر احترافي" />
                 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+                <html lang="ar" dir="rtl" />
               </Helmet>
               <Suspense fallback={<LoadingSpinner />}>
                 <Routes>
