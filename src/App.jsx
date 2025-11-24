@@ -1,0 +1,142 @@
+
+import React, { Suspense } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
+import { Toaster } from '@/components/ui/toaster';
+import AuthLayout from '@/layouts/AuthLayout';
+import MainLayout from '@/layouts/MainLayout';
+import ErrorBoundary from '@/components/ErrorBoundary';
+import { AuthProvider, useAuth } from '@/contexts/AuthContext';
+import { ThemeProvider } from '@/contexts/ThemeContext';
+import { LanguageProvider } from '@/contexts/LanguageContext';
+import SubscriptionWarning from '@/components/SubscriptionWarning';
+import { Loader2 } from 'lucide-react';
+
+// Lazy Load Pages for Performance
+const LoginPage = React.lazy(() => import('@/pages/LoginPage'));
+const RegisterPage = React.lazy(() => import('@/pages/RegisterPage'));
+const DashboardPage = React.lazy(() => import('@/pages/DashboardPage'));
+const InvoicesInPage = React.lazy(() => import('@/pages/InvoicesInPage'));
+const InvoicesOutPage = React.lazy(() => import('@/pages/InvoicesOutPage'));
+const InventoryPage = React.lazy(() => import('@/pages/InventoryPage'));
+const EmployeesPage = React.lazy(() => import('@/pages/EmployeesPage'));
+const PayrollPage = React.lazy(() => import('@/pages/PayrollPage'));
+const ReportsPage = React.lazy(() => import('@/pages/ReportsPage'));
+const PartnersPage = React.lazy(() => import('@/pages/PartnersPage'));
+const UsersPage = React.lazy(() => import('@/pages/UsersPage'));
+const StoreUsersPage = React.lazy(() => import('@/pages/StoreUsersPage'));
+const AdminPanel = React.lazy(() => import('@/pages/AdminPanel'));
+const AuditLogPage = React.lazy(() => import('@/pages/AuditLogPage'));
+const SettingsPage = React.lazy(() => import('@/pages/SettingsPage'));
+const SubscriptionPage = React.lazy(() => import('@/pages/SubscriptionPage'));
+const NotFoundPage = React.lazy(() => import('@/pages/NotFoundPage'));
+
+const LoadingSpinner = () => (
+  <div className="flex h-screen items-center justify-center bg-gray-50 dark:bg-gray-900">
+    <Loader2 className="h-10 w-10 animate-spin text-orange-500" />
+  </div>
+);
+
+function PrivateRoute({ children, roles = [] }) {
+  const { user, loading } = useAuth();
+  if (loading) return <LoadingSpinner />;
+  if (!user) return <Navigate to="/login" replace />;
+  
+  if (roles.length > 0) {
+      const hasRole = roles.includes('ANY') || 
+                      (roles.includes('SUPER_ADMIN') && user.isSuperAdmin) ||
+                      (roles.includes('STORE_OWNER') && user.isStoreOwner);
+      if (!hasRole && !user.isSuperAdmin) return <Navigate to="/dashboard" replace />;
+  }
+  
+  return children;
+}
+
+function PublicRoute({ children }) {
+  const { user, loading } = useAuth();
+  if (loading) return <LoadingSpinner />;
+  return !user ? children : <Navigate to="/dashboard" replace />;
+}
+
+function App() {
+  return (
+    <ErrorBoundary>
+      <LanguageProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            <Router>
+              <Helmet>
+                <title>Ibrahim Accounting System</title>
+                <meta name="description" content="Professional multi-tenant accounting system" />
+                <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+              </Helmet>
+              <Suspense fallback={<LoadingSpinner />}>
+                <Routes>
+                  <Route path="/login" element={
+                    <PublicRoute>
+                      <AuthLayout>
+                        <LoginPage />
+                      </AuthLayout>
+                    </PublicRoute>
+                  } />
+                  <Route path="/register" element={
+                    <PublicRoute>
+                      <AuthLayout>
+                        <RegisterPage />
+                      </AuthLayout>
+                    </PublicRoute>
+                  } />
+                  
+                  {/* Protected Routes */}
+                  <Route path="/dashboard" element={
+                    <PrivateRoute roles={['ANY']}>
+                      <MainLayout>
+                          <SubscriptionWarning />
+                          <DashboardPage />
+                      </MainLayout>
+                    </PrivateRoute>
+                  } />
+
+                  <Route path="/admin" element={
+                    <PrivateRoute roles={['SUPER_ADMIN']}>
+                      <MainLayout>
+                        <AdminPanel />
+                      </MainLayout>
+                    </PrivateRoute>
+                  } />
+
+                  <Route path="/store-users" element={
+                    <PrivateRoute roles={['STORE_OWNER', 'SUPER_ADMIN']}>
+                      <MainLayout>
+                          <SubscriptionWarning />
+                          <StoreUsersPage />
+                      </MainLayout>
+                    </PrivateRoute>
+                  } />
+
+                  <Route path="/invoices-in" element={<PrivateRoute roles={['ANY']}><MainLayout><SubscriptionWarning /><InvoicesInPage /></MainLayout></PrivateRoute>} />
+                  <Route path="/invoices-out" element={<PrivateRoute roles={['ANY']}><MainLayout><SubscriptionWarning /><InvoicesOutPage /></MainLayout></PrivateRoute>} />
+                  <Route path="/inventory" element={<PrivateRoute roles={['ANY']}><MainLayout><SubscriptionWarning /><InventoryPage /></MainLayout></PrivateRoute>} />
+                  <Route path="/employees" element={<PrivateRoute roles={['ANY']}><MainLayout><SubscriptionWarning /><EmployeesPage /></MainLayout></PrivateRoute>} />
+                  <Route path="/payroll" element={<PrivateRoute roles={['ANY']}><MainLayout><SubscriptionWarning /><PayrollPage /></MainLayout></PrivateRoute>} />
+                  <Route path="/reports" element={<PrivateRoute roles={['ANY']}><MainLayout><SubscriptionWarning /><ReportsPage /></MainLayout></PrivateRoute>} />
+                  <Route path="/partners" element={<PrivateRoute roles={['ANY']}><MainLayout><SubscriptionWarning /><PartnersPage /></MainLayout></PrivateRoute>} />
+                  <Route path="/users" element={<PrivateRoute roles={['ANY']}><MainLayout><SubscriptionWarning /><UsersPage /></MainLayout></PrivateRoute>} />
+                  <Route path="/audit-log" element={<PrivateRoute roles={['ANY']}><MainLayout><SubscriptionWarning /><AuditLogPage /></MainLayout></PrivateRoute>} />
+                  <Route path="/settings" element={<PrivateRoute roles={['ANY']}><MainLayout><SubscriptionWarning /><SettingsPage /></MainLayout></PrivateRoute>} />
+                  <Route path="/subscription" element={<PrivateRoute roles={['ANY']}><MainLayout><SubscriptionWarning /><SubscriptionPage /></MainLayout></PrivateRoute>} />
+                  
+                  <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                  <Route path="*" element={<NotFoundPage />} />
+                </Routes>
+              </Suspense>
+              <Toaster />
+            </Router>
+          </AuthProvider>
+        </ThemeProvider>
+      </LanguageProvider>
+    </ErrorBoundary>
+  );
+}
+
+export default App;

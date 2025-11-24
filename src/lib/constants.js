@@ -1,0 +1,46 @@
+
+export const ROLES = {
+  SUPER_ADMIN: 'Super Admin',
+  STORE_OWNER: 'Store Owner',
+  ACCOUNTANT: 'Accountant',
+  WAREHOUSE_MANAGER: 'Warehouse Manager',
+  EMPLOYEE: 'Employee',
+};
+
+export const SUBSCRIPTION_PLANS = {
+  MONTHLY: { id: 'monthly', name: 'Monthly Plan', price: 5, durationDays: 30 },
+  SIX_MONTHS: { id: '6months', name: '6 Months Plan', price: 30, durationDays: 180 },
+  YEARLY: { id: 'yearly', name: 'Yearly Plan', price: 40, durationDays: 365 },
+};
+
+export const CURRENCIES = {
+  TRY: { code: 'TRY', symbol: '₺', name: 'Turkish Lira' },
+  USD: { code: 'USD', symbol: '$', name: 'US Dollar' },
+  SYP: { code: 'SYP', symbol: '£S', name: 'Syrian Pound' },
+};
+
+export const LANGUAGES = {
+  EN: { code: 'en', name: 'English', dir: 'ltr' },
+  AR: { code: 'ar', name: 'العربية', dir: 'rtl' },
+  TR: { code: 'tr', name: 'Türkçe', dir: 'ltr' },
+};
+
+export const INVOICE_STATUS = {
+  DRAFT: 'Draft',
+  SUBMITTED: 'Submitted',
+  APPROVED: 'Approved',
+  PAID: 'Paid',
+  OVERDUE: 'Overdue',
+};
+
+export const EMPLOYEE_STATUS = {
+  ACTIVE: 'Active',
+  ON_LEAVE: 'On Leave',
+  TERMINATED: 'Terminated',
+};
+
+export const CONTACT_INFO = {
+  WHATSAPP: '+963994054027',
+  EMAIL: 'systemibrahem@gmail.com',
+  WHATSAPP_URL: 'https://wa.me/963994054027',
+};
