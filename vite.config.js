@@ -254,13 +254,48 @@ export default defineConfig({
 		},
 	},
 	build: {
+		target: 'es2015',
+		minify: 'terser',
+		terserOptions: {
+			compress: {
+				drop_console: true,
+				drop_debugger: true,
+				pure_funcs: ['console.log'],
+			},
+		},
 		rollupOptions: {
 			external: [
 				'@babel/parser',
 				'@babel/traverse',
 				'@babel/generator',
 				'@babel/types'
-			]
-		}
+			],
+			output: {
+				manualChunks: (id) => {
+					if (id.includes('node_modules')) {
+						if (id.includes('react') || id.includes('react-dom') || id.includes('react-router')) {
+							return 'react-vendor';
+						}
+						if (id.includes('@radix-ui')) {
+							return 'ui-vendor';
+						}
+						if (id.includes('chart.js') || id.includes('react-chartjs')) {
+							return 'charts';
+						}
+						if (id.includes('@supabase')) {
+							return 'supabase';
+						}
+						if (id.includes('framer-motion')) {
+							return 'animations';
+						}
+						return 'vendor';
+					}
+				},
+				chunkSizeWarningLimit: 1000,
+			},
+		},
+		chunkSizeWarningLimit: 1000,
+		sourcemap: false,
+		reportCompressedSize: false,
 	}
 });

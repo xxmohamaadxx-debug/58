@@ -45,33 +45,46 @@ const DashboardPage = () => {
 
   useEffect(() => {
     const loadStats = async () => {
-      if (!user?.tenant_id) return;
+      if (!user?.tenant_id) {
+        setLoading(false);
+        return;
+      }
       try {
-        const [invoicesIn, invoicesOut, employees, inventory] = await Promise.all([
-          supabaseService.getInvoicesIn(user.tenant_id),
-          supabaseService.getInvoicesOut(user.tenant_id),
-          supabaseService.getEmployees(user.tenant_id),
-          supabaseService.getInventory(user.tenant_id)
+        // Use Promise.allSettled for better error handling
+        const results = await Promise.allSettled([
+          supabaseService.getInvoicesIn(user.tenant_id).catch(() => []),
+          supabaseService.getInvoicesOut(user.tenant_id).catch(() => []),
+          supabaseService.getEmployees(user.tenant_id).catch(() => []),
+          supabaseService.getInventory(user.tenant_id).catch(() => [])
         ]);
         
-        const totalExpenses = invoicesIn?.reduce((sum, inv) => sum + Number(inv.amount), 0) || 0;
-        const totalIncome = invoicesOut?.reduce((sum, inv) => sum + Number(inv.amount), 0) || 0;
+        const invoicesIn = results[0].status === 'fulfilled' ? results[0].value : [];
+        const invoicesOut = results[1].status === 'fulfilled' ? results[1].value : [];
+        const employees = results[2].status === 'fulfilled' ? results[2].value : [];
+        const inventory = results[3].status === 'fulfilled' ? results[3].value : [];
+        
+        const totalExpenses = Array.isArray(invoicesIn) ? invoicesIn.reduce((sum, inv) => sum + Number(inv.amount || 0), 0) : 0;
+        const totalIncome = Array.isArray(invoicesOut) ? invoicesOut.reduce((sum, inv) => sum + Number(inv.amount || 0), 0) : 0;
         
         setStats({
           income: totalIncome,
           expenses: totalExpenses,
           net: totalIncome - totalExpenses,
-          employees: employees?.filter(e => e.status === 'Active').length || 0,
-          lowStock: inventory?.filter(i => i.quantity <= (i.min_stock || 5)).length || 0
+          employees: Array.isArray(employees) ? employees.filter(e => e.status === 'Active').length : 0,
+          lowStock: Array.isArray(inventory) ? inventory.filter(i => (i.quantity || 0) <= (i.min_stock || 5)).length : 0
         });
       } catch (error) {
         console.error("Dashboard load error:", error);
+        setStats({ income: 0, expenses: 0, net: 0, employees: 0, lowStock: 0 });
       } finally {
         setLoading(false);
       }
     };
-    loadStats();
-  }, [user]);
+    
+    // Add small delay to prevent blocking UI
+    const timeoutId = setTimeout(loadStats, 100);
+    return () => clearTimeout(timeoutId);
+  }, [user?.tenant_id]);
 
   const chartData = {
     labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],

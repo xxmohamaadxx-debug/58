@@ -28,17 +28,22 @@ export const AuthProvider = ({ children }) => {
       }
 
       // Get User Profile
-      const profile = await supabaseService.getUserProfile(sessionUser.id);
+      const profile = await supabaseService.getUserProfile(sessionUser.id).catch(() => null);
       
-      // Get Tenant Info
+      // Get Tenant Info only if profile exists and has tenant_id
       let tenantInfo = null;
       if (profile?.tenant_id) {
-        const { data, error } = await supabase
-          .from('tenants')
-          .select('*')
-          .eq('id', profile.tenant_id)
-          .single();
-        if (!error) tenantInfo = data;
+        try {
+          const { data, error } = await supabase
+            .from('tenants')
+            .select('*')
+            .eq('id', profile.tenant_id)
+            .single();
+          if (!error && data) tenantInfo = data;
+        } catch (err) {
+          console.warn('Tenant fetch error:', err);
+          // Continue even if tenant fetch fails
+        }
       }
 
       if (profile) {

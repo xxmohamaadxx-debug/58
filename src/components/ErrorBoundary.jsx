@@ -35,9 +35,9 @@ class ErrorBoundary extends React.Component {
             <div className="mx-auto w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-6">
               <AlertTriangle className="w-8 h-8 text-red-600" />
             </div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">Something went wrong</h1>
-            <p className="text-gray-600 mb-6">
-              The application encountered an unexpected error.
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">حدث خطأ</h1>
+            <p className="text-gray-600 dark:text-gray-400 mb-6">
+              واجه التطبيق خطأ غير متوقع. يرجى إعادة تحميل الصفحة.
             </p>
             
             <div className="bg-gray-100 p-4 rounded-md text-left mb-6 overflow-auto max-h-40 text-xs font-mono text-gray-700">
@@ -46,10 +46,10 @@ class ErrorBoundary extends React.Component {
 
             <div className="flex flex-col gap-3">
               <Button onClick={this.handleReload} className="w-full">
-                Reload Page
+                إعادة تحميل الصفحة
               </Button>
               <Button onClick={this.handleClearCache} variant="outline" className="w-full text-red-600 hover:text-red-700 hover:bg-red-50">
-                Clear Cache & Reset
+                مسح الذاكرة المؤقتة وإعادة التعيين
               </Button>
             </div>
           </div>
