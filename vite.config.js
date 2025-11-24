@@ -271,34 +271,11 @@ export default defineConfig({
 				'@babel/types'
 			],
 			output: {
-				manualChunks: (id) => {
-					if (id.includes('node_modules')) {
-						// Ensure React and React-DOM are loaded together first
-						if (id.includes('react') && !id.includes('react-dom')) {
-							return 'react-core';
-						}
-						if (id.includes('react-dom') || id.includes('scheduler') || id.includes('react/jsx')) {
-							return 'react-core';
-						}
-						// React Router after React is loaded
-						if (id.includes('react-router')) {
-							return 'react-vendor';
-						}
-						// UI libraries
-						if (id.includes('@radix-ui')) {
-							return 'ui-vendor';
-						}
-						// Charts
-						if (id.includes('chart.js') || id.includes('react-chartjs')) {
-							return 'charts';
-						}
-						// Supabase
-						if (id.includes('@supabase')) {
-							return 'supabase';
-						}
-						// Everything else
-						return 'vendor';
-					}
+				manualChunks: {
+					'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+					'ui-vendor': ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-toast'],
+					'charts': ['chart.js', 'react-chartjs-2'],
+					'supabase': ['@supabase/supabase-js'],
 				},
 				chunkSizeWarningLimit: 1000,
 			},
