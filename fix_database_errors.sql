@@ -162,10 +162,29 @@ SET role = 'SUPER_ADMIN',
     can_create_users = true
 WHERE email IN ('admin@ibrahim.com', 'systemibrahem@gmail.com');
 
+-- 14. حذف جميع RLS policies القديمة إن وجدت (للتأكد من عدم وجود recursion)
+DO $$ 
+DECLARE
+    r RECORD;
+BEGIN
+    -- حذف جميع policies على public_users
+    FOR r IN (SELECT policyname, tablename FROM pg_policies WHERE schemaname = 'public' AND tablename = 'public_users') LOOP
+        EXECUTE 'DROP POLICY IF EXISTS ' || quote_ident(r.policyname) || ' ON ' || quote_ident(r.tablename);
+    END LOOP;
+    
+    -- حذف جميع policies على tenants
+    FOR r IN (SELECT policyname, tablename FROM pg_policies WHERE schemaname = 'public' AND tablename = 'tenants') LOOP
+        EXECUTE 'DROP POLICY IF EXISTS ' || quote_ident(r.policyname) || ' ON ' || quote_ident(r.tablename);
+    END LOOP;
+    
+    RAISE NOTICE 'تم حذف جميع RLS policies القديمة';
+END $$;
+
 -- رسالة نجاح
 DO $$
 BEGIN
     RAISE NOTICE 'تم إصلاح قاعدة البيانات بنجاح!';
     RAISE NOTICE 'جميع الجداول والسياسات تم إنشاؤها/تحديثها';
+    RAISE NOTICE 'RLS معطل مؤقتاً لحل مشاكل الوصول';
 END $$;
 

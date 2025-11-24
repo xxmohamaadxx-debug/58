@@ -78,14 +78,14 @@ const UserDialog = ({ open, onOpenChange, user, onSave }) => {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">Role</label>
+            <label className="block text-sm font-medium mb-1 rtl:text-right">{t('common.role')}</label>
             <select
               className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
               value={formData.role}
               onChange={(e) => setFormData({ ...formData, role: e.target.value })}
             >
                 {Object.values(ROLES).map(role => (
-                    <option key={role} value={role}>{role}</option>
+                    <option key={role} value={role}>{t(`roles.${role.toLowerCase()}`) || role}</option>
                 ))}
             </select>
           </div>

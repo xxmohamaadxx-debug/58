@@ -48,72 +48,75 @@ const EmployeeDialog = ({ open, onOpenChange, employee, onSave }) => {
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle>
-            {employee ? t('common.edit') : t('common.add')} Employee
+            {employee ? t('common.edit') : t('common.add')} {t('employees.employee')}
           </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-1">Full Name</label>
+            <label className="block text-sm font-medium mb-1 rtl:text-right">{t('employees.fullName')}</label>
             <input
               type="text"
               required
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+              placeholder={t('employees.fullName')}
             />
           </div>
           
           <div>
-            <label className="block text-sm font-medium mb-1">Position</label>
+            <label className="block text-sm font-medium mb-1 rtl:text-right">{t('employees.position')}</label>
             <input
               type="text"
               required
               value={formData.position}
               onChange={(e) => setFormData({ ...formData, position: e.target.value })}
               className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+              placeholder={t('employees.position')}
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-1">Salary</label>
+              <label className="block text-sm font-medium mb-1 rtl:text-right">{t('employees.salary')}</label>
               <input
                 type="number"
+                step="0.01"
                 required
                 value={formData.salary}
                 onChange={(e) => setFormData({ ...formData, salary: e.target.value })}
                 className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+                placeholder={t('employees.salary')}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">Currency</label>
+              <label className="block text-sm font-medium mb-1 rtl:text-right">{t('common.currency')}</label>
               <select
                 value={formData.currency}
                 onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
                 className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
               >
-                {Object.keys(CURRENCIES).map(curr => (
-                    <option key={curr} value={curr}>{curr}</option>
-                ))}
+                <option value="TRY">₺ ليرة تركية (TRY)</option>
+                <option value="USD">$ دولار أمريكي (USD)</option>
+                <option value="SYP">£S ليرة سورية (SYP)</option>
               </select>
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-1">Status</label>
+              <label className="block text-sm font-medium mb-1 rtl:text-right">{t('common.status')}</label>
               <select
                 value={formData.status}
                 onChange={(e) => setFormData({ ...formData, status: e.target.value })}
                 className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
               >
-                {Object.values(EMPLOYEE_STATUS).map(status => (
-                    <option key={status} value={status}>{status}</option>
-                ))}
+                <option value="Active">{t('status.active')}</option>
+                <option value="Inactive">{t('status.inactive')}</option>
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">Hire Date</label>
+              <label className="block text-sm font-medium mb-1 rtl:text-right">{t('employees.hireDate')}</label>
               <input
                 type="date"
                 required
