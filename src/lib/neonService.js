@@ -379,12 +379,24 @@ export const neonService = {
 
   deleteTenant: async (tenantId) => {
     try {
-      // حذف جميع البيانات المرتبطة بالمتجر
+      // حذف جميع البيانات المرتبطة بالمتجر بالترتيب الصحيح
       // الحذف التلقائي بسبب ON DELETE CASCADE في قاعدة البيانات
-      await sql`DELETE FROM tenants WHERE id = ${tenantId}`;
+      // لكن نفضل الحذف اليدوي لضمان الحذف الكامل
       
-      // حذف جميع المستخدمين المرتبطين بالمتجر
+      // 1. حذف البيانات المرتبطة
+      await sql`DELETE FROM invoices_in WHERE tenant_id = ${tenantId}`;
+      await sql`DELETE FROM invoices_out WHERE tenant_id = ${tenantId}`;
+      await sql`DELETE FROM inventory_items WHERE tenant_id = ${tenantId}`;
+      await sql`DELETE FROM employees WHERE tenant_id = ${tenantId}`;
+      await sql`DELETE FROM partners WHERE tenant_id = ${tenantId}`;
+      await sql`DELETE FROM payroll WHERE tenant_id = ${tenantId}`;
+      await sql`DELETE FROM audit_logs WHERE tenant_id = ${tenantId}`;
+      
+      // 2. حذف جميع المستخدمين المرتبطين بالمتجر
       await sql`DELETE FROM users WHERE tenant_id = ${tenantId}`;
+      
+      // 3. حذف المتجر نفسه
+      await sql`DELETE FROM tenants WHERE id = ${tenantId}`;
       
       return true;
     } catch (error) {
