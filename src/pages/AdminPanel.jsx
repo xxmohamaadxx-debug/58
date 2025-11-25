@@ -201,7 +201,7 @@ const AdminPanel = () => {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div className="flex items-center gap-3">
           <div className="hidden md:block">
-            <Logo size="md" showText={true} />
+            <Logo size="lg" showText={true} />
           </div>
           <div>
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{t('adminPanel.title')}</h1>

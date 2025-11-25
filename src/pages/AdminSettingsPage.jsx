@@ -197,7 +197,7 @@ const AdminSettingsPage = () => {
 
       <div className="flex items-center gap-3 mb-6">
         <div className="hidden md:block">
-          <Logo size="md" showText={false} />
+          <Logo size="lg" showText={false} />
         </div>
         <div>
           <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">إعدادات المدير</h1>

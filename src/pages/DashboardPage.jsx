@@ -167,12 +167,12 @@ const DashboardPage = () => {
 
   return (
     <div className="space-y-6 min-h-[500px]">
-      <Helmet><title>{t('common.dashboard')} - Ibrahim System</title></Helmet>
+      <Helmet><title>{t('common.dashboard')} - {t('common.systemName')}</title></Helmet>
 
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div className="flex items-center gap-3">
           <div className="hidden md:block">
-            <Logo size="md" showText={true} />
+            <Logo size="lg" showText={true} />
           </div>
           <div>
             <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">

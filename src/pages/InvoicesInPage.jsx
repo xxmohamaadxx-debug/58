@@ -110,7 +110,7 @@ const InvoicesInPage = () => {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div className="flex items-center gap-3">
           <div className="hidden md:block">
-            <Logo size="md" showText={false} />
+            <Logo size="lg" showText={false} />
           </div>
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100">{t('common.invoicesIn')}</h1>
         </div>

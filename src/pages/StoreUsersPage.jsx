@@ -135,7 +135,7 @@ const StoreUsersPage = () => {
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-3">
           <div className="hidden md:block">
-            <Logo size="md" showText={false} />
+            <Logo size="lg" showText={false} />
           </div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">إدارة الفريق</h1>
         </div>

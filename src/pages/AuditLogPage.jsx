@@ -47,7 +47,7 @@ const AuditLogPage = () => {
       <div className="space-y-6">
         <div className="flex items-center gap-3">
           <div className="hidden md:block">
-            <Logo size="md" showText={false} />
+            <Logo size="lg" showText={false} />
           </div>
           <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">
             {t('common.auditLog')}

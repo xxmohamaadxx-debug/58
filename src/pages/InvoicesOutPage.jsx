@@ -5,11 +5,11 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { neonService } from '@/lib/neonService';
 import { Button } from '@/components/ui/button';
-import { Plus, Search, Filter, Download, Loader2 } from 'lucide-react';
+import { Plus, Search, Filter, Download, Loader2, Edit, Trash2 } from 'lucide-react';
 import InvoiceDialog from '@/components/invoices/InvoiceDialog';
-import InvoiceTable from '@/components/invoices/InvoiceTable';
 import { toast } from '@/components/ui/use-toast';
 import Logo from '@/components/Logo';
+import { formatDateAR, formatDateShort } from '@/lib/dateUtils';
 
 const InvoicesOutPage = () => {
   const { user } = useAuth();
@@ -19,6 +19,9 @@ const InvoicesOutPage = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [filterCurrency, setFilterCurrency] = useState('all');
+  const [filterCategory, setFilterCategory] = useState('all');
+  const [groupBy, setGroupBy] = useState('none'); // 'date', 'currency', 'category', 'none'
 
   useEffect(() => {
     if (user?.tenant_id) loadInvoices();
@@ -98,26 +101,23 @@ const InvoicesOutPage = () => {
     }
   };
 
-  const filteredInvoices = invoices.filter((inv) =>
-    inv.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    inv.amount?.toString().includes(searchTerm)
-  );
+  // لا نحتاج filteredInvoices هنا، سنستخدمها في العرض
 
   return (
     <>
       <Helmet>
-        <title>{t('nav.invoicesOut')} - Ibrahim Accounting System</title>
-        <meta name="description" content="Manage outgoing invoices and expense tracking" />
+        <title>{t('common.invoicesOut')} - {t('common.systemName')}</title>
+        <meta name="description" content={t('common.invoicesOut')} />
       </Helmet>
 
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-3">
             <div className="hidden md:block">
-              <Logo size="md" showText={false} />
+              <Logo size="lg" showText={false} />
             </div>
             <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">
-              {t('nav.invoicesOut')}
+              {t('common.invoicesOut')}
             </h1>
           </div>
           <Button
@@ -132,40 +132,227 @@ const InvoicesOutPage = () => {
           </Button>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-          <div className="flex gap-4 mb-6">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-              <input
-                type="text"
-                placeholder={t('common.search')}
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-gray-100"
-              />
-            </div>
-            <Button variant="outline" onClick={() => toast({ title: '🚧 هذه الميزة غير متاحة حالياً' })}>
-              <Filter className="h-4 w-4 mr-2" />
-              {t('common.filter')}
-            </Button>
-            <Button variant="outline" onClick={() => toast({ title: '🚧 هذه الميزة غير متاحة حالياً' })}>
-              <Download className="h-4 w-4 mr-2" />
-              {t('common.export')}
-            </Button>
-          </div>
-
-          {loading ? (
-            <div className="flex justify-center py-8">
-              <Loader2 className="h-8 w-8 animate-spin text-orange-500" />
-            </div>
-          ) : (
-            <InvoiceTable
-              invoices={filteredInvoices}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
+      {/* Filters and Search */}
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 space-y-4">
+        <div className="flex flex-col md:flex-row gap-4">
+          <div className="flex-1 relative">
+            <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <input
+              type="text"
+              placeholder="بحث في الصادرات..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pr-10 pl-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-gray-100"
             />
-          )}
+          </div>
+          <select
+            value={filterCurrency}
+            onChange={(e) => setFilterCurrency(e.target.value)}
+            className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-gray-100"
+          >
+            <option value="all">جميع العملات</option>
+            <option value="TRY">TRY</option>
+            <option value="USD">USD</option>
+            <option value="SYP">SYP</option>
+          </select>
+          <input
+            type="text"
+            placeholder="التصنيف"
+            value={filterCategory === 'all' ? '' : filterCategory}
+            onChange={(e) => setFilterCategory(e.target.value || 'all')}
+            className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-gray-100"
+          />
+          <select
+            value={groupBy}
+            onChange={(e) => setGroupBy(e.target.value)}
+            className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-gray-100"
+          >
+            <option value="none">بدون تجميع</option>
+            <option value="date">تجميع حسب التاريخ</option>
+            <option value="currency">تجميع حسب العملة</option>
+            <option value="category">تجميع حسب التصنيف</option>
+          </select>
         </div>
+      </div>
+
+      <div className="space-y-4">
+        {loading ? <Loader2 className="animate-spin mx-auto" /> : (
+          (() => {
+            // Filter invoices
+            let filteredInvoices = invoices.filter(inv => {
+              const matchesSearch = !searchTerm || 
+                inv.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                inv.partner_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                inv.amount?.toString().includes(searchTerm);
+              const matchesCurrency = filterCurrency === 'all' || inv.currency === filterCurrency;
+              const matchesCategory = filterCategory === 'all' || inv.category === filterCategory;
+              return matchesSearch && matchesCurrency && matchesCategory;
+            });
+
+            // Group invoices
+            let groupedInvoices = {};
+            if (groupBy !== 'none') {
+              filteredInvoices.forEach(inv => {
+                let key = '';
+                if (groupBy === 'date') key = inv.date || 'بدون تاريخ';
+                else if (groupBy === 'currency') key = inv.currency || 'بدون عملة';
+                else if (groupBy === 'category') key = inv.category || 'بدون تصنيف';
+                
+                if (!groupedInvoices[key]) groupedInvoices[key] = [];
+                groupedInvoices[key].push(inv);
+              });
+            }
+
+            const displayInvoices = groupBy === 'none' ? filteredInvoices : Object.entries(groupedInvoices);
+
+            if (displayInvoices.length === 0) {
+              return <p className="text-center text-gray-500">{t('common.noData')}</p>;
+            }
+
+            return (
+              <>
+                {/* Mobile Card View */}
+                <div className="block md:hidden space-y-4">
+                  {groupBy === 'none' ? (
+                    filteredInvoices.map(inv => (
+                      <div key={inv.id} className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow border border-gray-100 dark:border-gray-700">
+                        <div className="flex justify-between mb-2">
+                          <span className="text-sm text-gray-500">{inv.date ? formatDateShort(inv.date) : '-'}</span>
+                          <span className={`px-2 py-0.5 rounded text-xs ${inv.status === 'Paid' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>{inv.status || 'Draft'}</span>
+                        </div>
+                        <p className="font-medium text-gray-900 dark:text-white mb-2">{inv.description}</p>
+                        {inv.partner_name && <p className="text-sm text-gray-500 mb-1">العميل: {inv.partner_name}</p>}
+                        <div className="text-lg font-bold text-green-500 text-right">{inv.amount} {inv.currency}</div>
+                      </div>
+                    ))
+                  ) : (
+                    Object.entries(groupedInvoices).map(([key, group]) => (
+                      <div key={key} className="space-y-2">
+                        <h3 className="font-semibold text-gray-700 dark:text-gray-300 p-2 bg-gray-100 dark:bg-gray-700 rounded">{key}</h3>
+                        {group.map(inv => (
+                          <div key={inv.id} className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow border border-gray-100 dark:border-gray-700 mr-4">
+                            <div className="flex justify-between mb-2">
+                              <span className="text-sm text-gray-500">{inv.date ? formatDateShort(inv.date) : '-'}</span>
+                              <span className={`px-2 py-0.5 rounded text-xs ${inv.status === 'Paid' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>{inv.status || 'Draft'}</span>
+                            </div>
+                            <p className="font-medium text-gray-900 dark:text-white mb-2">{inv.description}</p>
+                            {inv.partner_name && <p className="text-sm text-gray-500 mb-1">العميل: {inv.partner_name}</p>}
+                            <div className="text-lg font-bold text-green-500 text-right">{inv.amount} {inv.currency}</div>
+                          </div>
+                        ))}
+                      </div>
+                    ))
+                  )}
+                </div>
+
+                {/* Desktop Table View */}
+                <div className="hidden md:block bg-white dark:bg-gray-800 rounded-lg shadow p-6 overflow-x-auto">
+                  {groupBy === 'none' ? (
+                    <table className="w-full text-left rtl:text-right">
+                      <thead>
+                        <tr className="border-b dark:border-gray-700">
+                          <th className="p-4 text-sm font-semibold">{t('common.date')}</th>
+                          <th className="p-4 text-sm font-semibold">{t('common.description')}</th>
+                          <th className="p-4 text-sm font-semibold">العميل</th>
+                          <th className="p-4 text-sm font-semibold">{t('common.category')}</th>
+                          <th className="p-4 text-sm font-semibold">{t('common.amount')}</th>
+                          <th className="p-4 text-sm font-semibold">{t('common.currency')}</th>
+                          <th className="p-4 text-sm font-semibold">{t('common.actions')}</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
+                        {filteredInvoices.map(inv => (
+                          <tr key={inv.id} className="hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors">
+                            <td className="p-4 text-sm">{inv.date ? formatDateAR(inv.date) : '-'}</td>
+                            <td className="p-4 text-sm">{inv.description || '-'}</td>
+                            <td className="p-4 text-sm">{inv.partner_name || '-'}</td>
+                            <td className="p-4 text-sm">{inv.category || '-'}</td>
+                            <td className="p-4 text-sm font-bold text-green-500">{inv.amount || 0}</td>
+                            <td className="p-4 text-sm">{inv.currency || 'TRY'}</td>
+                            <td className="p-4">
+                              <div className="flex gap-2">
+                                <Button size="sm" variant="ghost" onClick={() => handleEdit(inv)}>
+                                  <Edit className="h-4 w-4" />
+                                </Button>
+                                <Button size="sm" variant="ghost" onClick={async () => {
+                                  if (window.confirm(t('common.confirmDelete'))) {
+                                    try {
+                                      await neonService.deleteInvoiceOut(inv.id, user.tenant_id);
+                                      toast({ title: t('common.success') });
+                                      loadInvoices();
+                                    } catch (error) {
+                                      toast({ title: t('common.error'), variant: "destructive" });
+                                    }
+                                  }
+                                }}>
+                                  <Trash2 className="h-4 w-4 text-red-500" />
+                                </Button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  ) : (
+                    Object.entries(groupedInvoices).map(([key, group]) => (
+                      <div key={key} className="mb-6">
+                        <h3 className="font-semibold text-lg text-gray-700 dark:text-gray-300 mb-3 p-3 bg-gray-100 dark:bg-gray-700 rounded">
+                          {key}
+                        </h3>
+                        <table className="w-full text-left rtl:text-right">
+                          <thead>
+                            <tr className="border-b dark:border-gray-700">
+                              <th className="p-4 text-sm font-semibold">{t('common.date')}</th>
+                              <th className="p-4 text-sm font-semibold">{t('common.description')}</th>
+                              <th className="p-4 text-sm font-semibold">العميل</th>
+                              <th className="p-4 text-sm font-semibold">{t('common.category')}</th>
+                              <th className="p-4 text-sm font-semibold">{t('common.amount')}</th>
+                              <th className="p-4 text-sm font-semibold">{t('common.currency')}</th>
+                              <th className="p-4 text-sm font-semibold">{t('common.actions')}</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
+                            {group.map(inv => (
+                              <tr key={inv.id} className="hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors">
+                                <td className="p-4 text-sm">{inv.date ? formatDateAR(inv.date) : '-'}</td>
+                                <td className="p-4 text-sm">{inv.description || '-'}</td>
+                                <td className="p-4 text-sm">{inv.partner_name || '-'}</td>
+                                <td className="p-4 text-sm">{inv.category || '-'}</td>
+                                <td className="p-4 text-sm font-bold text-green-500">{inv.amount || 0}</td>
+                                <td className="p-4 text-sm">{inv.currency || 'TRY'}</td>
+                                <td className="p-4">
+                                  <div className="flex gap-2">
+                                    <Button size="sm" variant="ghost" onClick={() => handleEdit(inv)}>
+                                      <Edit className="h-4 w-4" />
+                                    </Button>
+                                    <Button size="sm" variant="ghost" onClick={async () => {
+                                      if (window.confirm(t('common.confirmDelete'))) {
+                                        try {
+                                          await neonService.deleteInvoiceOut(inv.id, user.tenant_id);
+                                          toast({ title: t('common.success') });
+                                          loadInvoices();
+                                        } catch (error) {
+                                          toast({ title: t('common.error'), variant: "destructive" });
+                                        }
+                                      }
+                                    }}>
+                                      <Trash2 className="h-4 w-4 text-red-500" />
+                                    </Button>
+                                  </div>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </>
+            );
+          })()
+        )}
+      </div>
       </div>
 
       <InvoiceDialog

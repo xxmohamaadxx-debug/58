@@ -21,12 +21,12 @@ const SettingsPage = () => {
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       <Helmet>
-        <title>{t('common.settings')} - Ibrahim System</title>
+        <title>{t('common.settings')} - {t('common.systemName')}</title>
       </Helmet>
 
       <div className="flex items-center gap-3 mb-6">
         <div className="hidden md:block">
-          <Logo size="md" showText={false} />
+          <Logo size="lg" showText={false} />
         </div>
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{t('common.settings')}</h1>
       </div>

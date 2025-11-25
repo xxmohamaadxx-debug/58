@@ -277,6 +277,23 @@ export const translations = {
       accountCreated: "تم إنشاء الحساب بنجاح!",
       welcomeMessage: "مرحباً بك في نظام إبراهيم للمحاسبة"
     },
+    settings: {
+      saved: "تم الحفظ",
+      savedMessage: "تم حفظ التغييرات بنجاح",
+      appearance: "المظهر",
+      language: "اللغة",
+      theme: "المظهر",
+      darkMode: "الوضع الداكن",
+      lightMode: "الوضع الفاتح",
+      profile: "الملف الشخصي",
+      fullName: "الاسم الكامل",
+      organization: "المنظمة",
+      tenantId: "معرف المتجر",
+      plan: "الخطة",
+      trial: "تجريبي",
+      upgradeNow: "ترقية الآن",
+      saveChanges: "حفظ التغييرات"
+    },
     roles: {
       super_admin: "مشرف عام",
       store_owner: "مالك المتجر",
