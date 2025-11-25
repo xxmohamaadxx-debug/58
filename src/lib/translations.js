@@ -161,6 +161,8 @@ export const translations = {
       notes: "ملاحظات",
       submit: "إرسال",
       back: "عودة",
+      all: "الكل",
+      none: "بدون",
       close: "إغلاق",
       confirm: "تأكيد",
       yes: "نعم",
