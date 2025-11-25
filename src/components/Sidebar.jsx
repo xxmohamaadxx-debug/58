@@ -8,6 +8,7 @@ import {
   Users, Settings, LogOut, Shield, BarChart, 
   CreditCard, Briefcase, X
 } from 'lucide-react';
+import Logo from '@/components/Logo';
 
 const Sidebar = ({ isOpen, setIsOpen }) => {
   const location = useLocation();
@@ -29,22 +30,13 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
 
   return (
     <div className={`
-      fixed inset-y-0 left-0 z-30 w-64 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 
+      fixed inset-y-0 rtl:left-0 ltr:right-0 z-30 w-64 bg-white dark:bg-gray-900 border-r rtl:border-r ltr:border-l border-gray-200 dark:border-gray-800 
       transform transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0
-      ${isOpen ? 'translate-x-0' : 'ltr:-translate-x-full rtl:translate-x-full lg:rtl:translate-x-0'}
+      ${isOpen ? 'translate-x-0' : 'rtl:-translate-x-full ltr:translate-x-full lg:translate-x-0'}
     `}>
-      <div className="p-6 flex justify-between items-center border-b border-gray-200 dark:border-gray-800">
+      <div className="p-4 md:p-6 flex justify-between items-center border-b border-gray-200 dark:border-gray-800">
         <Link to="/dashboard" className="flex items-center gap-2" onClick={handleLinkClick}>
-          <div className="relative w-10 h-10 rounded-lg bg-gradient-to-tr from-orange-500 to-pink-500 flex items-center justify-center text-white font-bold shadow-lg overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-orange-400 to-pink-500 opacity-90"></div>
-            <span className="relative z-10 text-xl font-bold">I</span>
-          </div>
-          <div className="flex flex-col">
-            <span className="text-lg font-bold bg-gradient-to-r from-orange-600 to-pink-600 bg-clip-text text-transparent leading-tight">
-              {t('common.systemName') || 'إبراهيم'}
-            </span>
-            <span className="text-xs text-gray-500 dark:text-gray-400 hidden lg:block">نظام محاسبة متكامل</span>
-          </div>
+          <Logo size="md" showText={true} className="flex-shrink-0" />
         </Link>
         <button 
           onClick={() => setIsOpen(false)} 
@@ -73,7 +65,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
           </>
         )}
 
-        <div className="px-4 mb-2 mt-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Overview</div>
+        <div className="px-4 mb-2 mt-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">{t('nav.overview') || 'نظرة عامة'}</div>
         
         <Link to="/dashboard" className={navItemClass('/dashboard')} onClick={handleLinkClick}>
           <LayoutDashboard className="h-5 w-5 ltr:mr-3 rtl:ml-3" />
@@ -95,7 +87,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
           {t('common.inventory')}
         </Link>
 
-        <div className="px-4 mb-2 mt-6 text-xs font-semibold text-gray-400 uppercase tracking-wider">Management</div>
+        <div className="px-4 mb-2 mt-6 text-xs font-semibold text-gray-400 uppercase tracking-wider">{t('nav.management') || 'إدارة'}</div>
 
         <Link to="/partners" className={navItemClass('/partners')} onClick={handleLinkClick}>
           <Users className="h-5 w-5 ltr:mr-3 rtl:ml-3" />
@@ -119,7 +111,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
           {t('common.reports')}
         </Link>
 
-        <div className="px-4 mb-2 mt-6 text-xs font-semibold text-gray-400 uppercase tracking-wider">System</div>
+        <div className="px-4 mb-2 mt-6 text-xs font-semibold text-gray-400 uppercase tracking-wider">{t('nav.system') || 'النظام'}</div>
 
         <Link to="/subscription" className={navItemClass('/subscription')} onClick={handleLinkClick}>
           <CreditCard className="h-5 w-5 ltr:mr-3 rtl:ml-3" />
