@@ -33,7 +33,7 @@ const getByTenant = async (table, tenantId, { select = '*', orderBy = { column: 
     if (orderBy && orderBy.column) {
       query += ` ORDER BY ${orderBy.column} ${orderBy.ascending ? 'ASC' : 'DESC'}`;
     }
-    const result = await sql.unsafe(query, [tenantId]);
+    const result = await sql(query, [tenantId]);
     return result || [];
   } catch (error) {
     console.error(`getByTenant error for ${table}:`, error);
@@ -51,7 +51,7 @@ const createRecord = async (table, data, tenantId) => {
   const placeholders = values.map((_, i) => `$${i + 1}`).join(', ');
   
   const query = `INSERT INTO ${table} (${columns.join(', ')}) VALUES (${placeholders}) RETURNING *`;
-  const result = await sql.unsafe(query, values);
+  const result = await sql(query, values);
   return result[0];
 };
 
@@ -66,7 +66,7 @@ const updateRecord = async (table, id, data, tenantId) => {
   const query = `UPDATE ${table} SET ${setClause} WHERE id = $1 AND tenant_id = $${values.length + 1} RETURNING *`;
   values.push(tenantId);
   
-  const result = await sql.unsafe(query, values);
+  const result = await sql(query, values);
   if (!result || result.length === 0) throw new Error('Record not found or access denied');
   return result[0];
 };
@@ -76,16 +76,13 @@ const deleteRecord = async (table, id, tenantId) => {
   if (!tenantId) throw new Error('Tenant ID is required');
 
   const query = `DELETE FROM ${table} WHERE id = $1 AND tenant_id = $2`;
-  await sql.unsafe(query, [id, tenantId]);
+  await sql(query, [id, tenantId]);
   return true;
 };
 
 const auditLog = async (tenantId, userId, action, details) => {
   try {
-    await sql`
-      INSERT INTO audit_logs (tenant_id, user_id, action, details)
-      VALUES (${tenantId}, ${userId}, ${action}, ${JSON.stringify(details)})
-    `;
+    await sql`INSERT INTO audit_logs (tenant_id, user_id, action, details) VALUES (${tenantId}, ${userId}, ${action}, ${JSON.stringify(details)})`;
   } catch (e) {
     console.error('Audit log failed', e);
   }
@@ -195,7 +192,7 @@ export const neonService = {
       
       const placeholders = values.map((_, i) => `$${i + 1}`).join(', ');
       const query = `INSERT INTO users (${columns.join(', ')}) VALUES (${placeholders}) RETURNING *`;
-      const result = await sql.unsafe(query, values);
+      const result = await sql(query, values);
       return result[0];
     } catch (error) {
       console.error('createUserProfile error:', error);
@@ -212,7 +209,7 @@ export const neonService = {
       const setClause = columns.map((col, i) => `${col} = $${i + 2}`).join(', ');
       const values = [id, ...Object.values(data)];
       const query = `UPDATE users SET ${setClause} WHERE id = $1 RETURNING *`;
-      const result = await sql.unsafe(query, values);
+      const result = await sql(query, values);
       if (!result || result.length === 0) throw new Error('User not found');
       return result[0];
     } catch (error) {
@@ -339,7 +336,7 @@ export const neonService = {
       const setClause = columns.map((col, i) => `${col} = $${i + 2}`).join(', ');
       const values = [tenantId, ...Object.values(data)];
       const query = `UPDATE tenants SET ${setClause} WHERE id = $1 RETURNING *`;
-      const result = await sql.unsafe(query, values);
+      const result = await sql(query, values);
       return result[0];
     } catch (error) {
       console.error('updateTenant error:', error);
