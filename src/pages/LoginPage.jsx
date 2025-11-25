@@ -71,10 +71,23 @@ const LoginPage = () => {
               initial={{ opacity: 0, height: 0 }} 
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              className="p-3 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3 text-sm text-red-800 overflow-hidden"
+              className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg flex items-start gap-3 text-sm text-red-800 dark:text-red-300 overflow-hidden"
             >
-              <AlertCircle className="h-5 w-5 shrink-0 text-red-600" />
-              <span>{error}</span>
+              <AlertCircle className="h-5 w-5 shrink-0 text-red-600 dark:text-red-400 mt-0.5" />
+              <div className="flex-1">
+                <div className="whitespace-pre-line leading-relaxed">{error}</div>
+                {error.includes('VITE_NEON_DATABASE_URL') && (
+                  <div className="mt-3 pt-3 border-t border-red-200 dark:border-red-800">
+                    <a 
+                      href="FIX_NEON_AUTHENTICATION.md" 
+                      target="_blank"
+                      className="text-red-700 dark:text-red-400 underline font-medium hover:text-red-900 dark:hover:text-red-300"
+                    >
+                      اقرأ دليل حل المشكلة →
+                    </a>
+                  </div>
+                )}
+              </div>
             </motion.div>
           )}
         </AnimatePresence>

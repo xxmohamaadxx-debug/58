@@ -1,7 +1,12 @@
 // خدمة Neon لاستبدال Supabase تماماً
-import { getNeonClient } from './neonClient';
+import { getNeonClient, sql } from './neonClient';
 
-const sql = getNeonClient();
+// Helper to check if database connection is available
+const checkConnection = () => {
+  if (!sql) {
+    throw new Error('الاتصال بقاعدة البيانات غير متاح. يرجى التحقق من إعدادات قاعدة البيانات.');
+  }
+};
 
 // Helper functions - استخدام Web Crypto API للتشفير
 const hashPassword = async (password) => {
@@ -98,10 +103,28 @@ export const neonService = {
   // Auth & User
   getUserByEmail: async (email) => {
     try {
+      checkConnection();
       const result = await sql`SELECT * FROM users WHERE email = ${email} AND is_active = true LIMIT 1`;
       return result[0] || null;
     } catch (error) {
       console.error('getUserByEmail error:', error);
+      // Check if it's an authentication error
+      const errorMsg = error.message || error.toString() || '';
+      if (errorMsg.includes('password authentication failed') || errorMsg.includes('authentication failed')) {
+        const helpMsg = 'فشل التحقق من قاعدة البيانات.\n\n' +
+          'الحل:\n' +
+          '1. اذهب إلى https://console.neon.tech/\n' +
+          '2. اختر مشروعك > Dashboard > Connection Details\n' +
+          '3. اختر "Connection pooling" وانسخ الرابط الكامل\n' +
+          '4. ضع الرابط في ملف .env كالتالي:\n' +
+          '   VITE_NEON_DATABASE_URL=postgresql://...\n' +
+          '5. أعد تشغيل الخادم\n\n' +
+          'راجع ملف NEON_CONNECTION_SETUP.md للمزيد من التفاصيل';
+        throw new Error(helpMsg);
+      }
+      if (errorMsg.includes('Connection') || errorMsg.includes('اتصال') || errorMsg.includes('connect')) {
+        throw new Error('لا يمكن الاتصال بقاعدة البيانات. يرجى التحقق من:\n1. ملف .env موجود ويحتوي على VITE_NEON_DATABASE_URL\n2. رابط الاتصال صحيح ومحدث من Neon Console\n3. الإنترنت متصل');
+      }
       return null;
     }
   },
@@ -149,6 +172,7 @@ export const neonService = {
 
   verifyPassword: async (email, password) => {
     try {
+      checkConnection();
       const user = await neonService.getUserByEmail(email);
       if (!user) return null;
       
@@ -161,6 +185,15 @@ export const neonService = {
       return user;
     } catch (error) {
       console.error('verifyPassword error:', error);
+      // Re-throw connection/authentication errors with better messages
+      const errorMsg = error.message || error.toString() || '';
+      if (errorMsg.includes('password authentication failed') || 
+          errorMsg.includes('authentication failed') ||
+          errorMsg.includes('الاتصال') || 
+          errorMsg.includes('Connection') || 
+          errorMsg.includes('connect')) {
+        throw error; // Re-throw with improved message from getUserByEmail
+      }
       return null;
     }
   },

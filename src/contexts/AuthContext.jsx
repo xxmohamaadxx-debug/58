@@ -167,6 +167,10 @@ export const AuthProvider = ({ children }) => {
       return { user };
     } catch (error) {
       console.error('Login error:', error);
+      // Check for database connection errors and provide helpful message
+      if (error.message && (error.message.includes('الاتصال') || error.message.includes('Connection') || error.message.includes('password authentication'))) {
+        throw new Error('فشل الاتصال بقاعدة البيانات. يرجى التحقق من إعدادات قاعدة البيانات. راجع ملف NEON_CONNECTION_SETUP.md للمساعدة.');
+      }
       throw error;
     }
   };
