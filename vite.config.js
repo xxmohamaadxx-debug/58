@@ -258,7 +258,7 @@ export default defineConfig({
 		minify: 'terser',
 		terserOptions: {
 			compress: {
-				drop_console: true,
+				drop_console: false,
 				drop_debugger: true,
 				pure_funcs: ['console.log'],
 			},
@@ -282,6 +282,7 @@ export default defineConfig({
 				// Ignore certain warnings
 				if (warning.code === 'CIRCULAR_DEPENDENCY') return;
 				if (warning.code === 'MODULE_LEVEL_DIRECTIVE') return;
+				if (warning.code === 'UNRESOLVED_IMPORT') return;
 				warn(warning);
 			},
 		},
@@ -291,5 +292,6 @@ export default defineConfig({
 		commonjsOptions: {
 			transformMixedEsModules: true,
 		},
+		emptyOutDir: true,
 	}
 });

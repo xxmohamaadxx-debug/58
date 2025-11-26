@@ -1,11 +1,11 @@
 [build]
-  command = "npm ci --legacy-peer-deps && npm run build"
+  command = "npm install --legacy-peer-deps && npm run build"
   publish = "dist"
   
 [build.environment]
   NODE_VERSION = "18"
   NPM_FLAGS = "--legacy-peer-deps"
-  CI = "true"
+  CI = "false"
   
 [build.processing]
   skip_processing = false
