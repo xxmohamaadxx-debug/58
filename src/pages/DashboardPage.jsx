@@ -51,6 +51,7 @@ const DashboardPage = () => {
     lowStock: 0 
   });
   const [loading, setLoading] = useState(true);
+  const [filterPeriod, setFilterPeriod] = useState('day'); // 'day', 'week', 'month', 'all'
 
   useEffect(() => {
     const loadStats = async () => {
@@ -93,10 +94,36 @@ const DashboardPage = () => {
 
         const results = await Promise.allSettled(promises);
         
-        const invoicesIn = Array.isArray(results[0].value) ? results[0].value : [];
-        const invoicesOut = Array.isArray(results[1].value) ? results[1].value : [];
+        let invoicesIn = Array.isArray(results[0].value) ? results[0].value : [];
+        let invoicesOut = Array.isArray(results[1].value) ? results[1].value : [];
         const employees = Array.isArray(results[2].value) ? results[2].value : [];
         const inventory = Array.isArray(results[3].value) ? results[3].value : [];
+        
+        // تصفية حسب الفترة المحددة
+        const now = new Date();
+        let startDate = null;
+        
+        if (filterPeriod === 'day') {
+          startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        } else if (filterPeriod === 'week') {
+          const dayOfWeek = now.getDay();
+          const diff = now.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1); // Monday
+          startDate = new Date(now.setDate(diff));
+          startDate.setHours(0, 0, 0, 0);
+        } else if (filterPeriod === 'month') {
+          startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+        }
+        
+        if (startDate) {
+          invoicesIn = invoicesIn.filter(inv => {
+            const invDate = new Date(inv.date || inv.created_at);
+            return invDate >= startDate;
+          });
+          invoicesOut = invoicesOut.filter(inv => {
+            const invDate = new Date(inv.date || inv.created_at);
+            return invDate >= startDate;
+          });
+        }
         
         // حساب الإحصائيات لكل عملة منفصلة
         const incomeByCurrency = { TRY: 0, USD: 0, SYP: 0 };
@@ -139,7 +166,7 @@ const DashboardPage = () => {
     // Always load stats, but with small delay to prevent blocking
     const timeoutId = setTimeout(loadStats, 100);
     return () => clearTimeout(timeoutId);
-  }, [user?.tenant_id, user?.isSuperAdmin, user?.id]);
+  }, [user?.tenant_id, user?.isSuperAdmin, user?.id, filterPeriod]);
 
   const chartData = {
     labels: [
@@ -179,8 +206,20 @@ const DashboardPage = () => {
             </p>
           </div>
         </div>
-        <div className="text-sm text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 px-4 py-2 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700">
-          {formatDateAR(new Date(), { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+        <div className="flex items-center gap-3">
+          <select
+            value={filterPeriod}
+            onChange={(e) => setFilterPeriod(e.target.value)}
+            className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-gray-100 text-sm"
+          >
+            <option value="day">اليوم</option>
+            <option value="week">هذا الأسبوع</option>
+            <option value="month">هذا الشهر</option>
+            <option value="all">الكل</option>
+          </select>
+          <div className="text-sm text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 px-4 py-2 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700">
+            {formatDateAR(new Date(), { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+          </div>
         </div>
       </div>
 
