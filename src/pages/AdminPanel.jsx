@@ -8,7 +8,7 @@ import { Loader2, Plus, Store, Edit, Trash2, MessageCircle } from 'lucide-react'
 import { toast } from '@/components/ui/use-toast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { SUBSCRIPTION_PLANS, CONTACT_INFO, ROLES } from '@/lib/constants';
-import { formatDateAR } from '@/lib/dateUtils';
+import { formatDateAR, formatDateForInput } from '@/lib/dateUtils';
 
 const AdminPanel = () => {
   const { user } = useAuth();
@@ -177,7 +177,7 @@ const AdminPanel = () => {
       name: store.name || '',
       subscription_plan: store.subscription_plan || 'monthly',
       subscription_status: store.subscription_status || 'active',
-      subscription_expires_at: store.subscription_expires_at ? store.subscription_expires_at.split('T')[0] : ''
+      subscription_expires_at: store.subscription_expires_at ? formatDateForInput(store.subscription_expires_at) : ''
     });
     setEditDialogOpen(true);
   };

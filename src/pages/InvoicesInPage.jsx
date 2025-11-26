@@ -5,13 +5,14 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { neonService } from '@/lib/neonService';
 import { Button } from '@/components/ui/button';
-import { Plus, Loader2, Edit, Trash2, Search, Filter, Download } from 'lucide-react';
+import { Plus, Loader2, Edit, Trash2, Search, Filter, Download, Printer, FileDown } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 import InvoiceDialog from '@/components/invoices/InvoiceDialog';
 import { formatDateAR, formatDateShort } from '@/lib/dateUtils';
+import { exportInvoicePDF, printInvoice } from '@/lib/pdfUtils';
 
 const InvoicesInPage = () => {
-  const { user } = useAuth();
+  const { user, tenant } = useAuth();
   const { t } = useLanguage();
   const [invoices, setInvoices] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -286,8 +287,42 @@ const InvoicesInPage = () => {
                             <td className="p-4 text-sm">{inv.currency || 'TRY'}</td>
                             <td className="p-4">
                               <div className="flex gap-2">
-                                <Button size="sm" variant="ghost" onClick={() => handleEdit(inv)}>
+                                <Button 
+                                  size="sm" 
+                                  variant="ghost" 
+                                  onClick={() => handleEdit(inv)}
+                                  title="تعديل"
+                                >
                                   <Edit className="h-4 w-4" />
+                                </Button>
+                                <Button 
+                                  size="sm" 
+                                  variant="ghost" 
+                                  onClick={async () => {
+                                    try {
+                                      await exportInvoicePDF(inv, 'in', tenant?.name);
+                                      toast({ title: 'تم تصدير PDF بنجاح' });
+                                    } catch (error) {
+                                      toast({ title: 'خطأ في التصدير', variant: "destructive" });
+                                    }
+                                  }}
+                                  title="تصدير PDF"
+                                >
+                                  <FileDown className="h-4 w-4 text-blue-500" />
+                                </Button>
+                                <Button 
+                                  size="sm" 
+                                  variant="ghost" 
+                                  onClick={async () => {
+                                    try {
+                                      await printInvoice(inv, 'in', tenant?.name);
+                                    } catch (error) {
+                                      toast({ title: 'خطأ في الطباعة', variant: "destructive" });
+                                    }
+                                  }}
+                                  title="طباعة"
+                                >
+                                  <Printer className="h-4 w-4 text-green-500" />
                                 </Button>
                                 <Button size="sm" variant="ghost" onClick={async () => {
                                   if (window.confirm(t('common.confirmDelete'))) {
