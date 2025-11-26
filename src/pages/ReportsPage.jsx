@@ -8,7 +8,8 @@ import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import { Button } from '@/components/ui/button';
 import { Download, FileText, FileSpreadsheet, Filter, Calendar } from 'lucide-react';
-import { exportToPDF, exportToExcel, generateReport, getPeriodDates } from '@/lib/exportUtils';
+import { exportToExcel, generateReport, getPeriodDates } from '@/lib/exportUtils';
+import { exportReportPDF } from '@/lib/pdfUtils';
 import { formatDateAR } from '@/lib/dateUtils';
 import { toast } from '@/components/ui/use-toast';
 
@@ -16,7 +17,7 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 
 const ReportsPage = () => {
   const { t, locale } = useLanguage();
-  const { user } = useAuth();
+  const { user, tenant } = useAuth();
   const [financialData, setFinancialData] = useState(null);
   const [invoicesIn, setInvoicesIn] = useState([]);
   const [invoicesOut, setInvoicesOut] = useState([]);
@@ -61,33 +62,42 @@ const ReportsPage = () => {
     loadReports();
   }, [user?.tenant_id]);
 
-  const handleExportPDF = () => {
-    const { startDate, endDate } = getPeriodDates(selectedPeriod);
-    const reportData = generateReport(invoicesIn, invoicesOut, {
-      startDate,
-      endDate,
-      currency: filterCurrency || undefined,
-      category: filterCategory || undefined
-    });
+  const handleExportPDF = async () => {
+    try {
+      const { startDate, endDate } = getPeriodDates(selectedPeriod);
+      const reportData = generateReport(invoicesIn, invoicesOut, {
+        startDate,
+        endDate,
+        currency: filterCurrency || undefined,
+        category: filterCategory || undefined
+      });
 
-    const columns = [
-      { key: 'type', label: t('reports.type') || 'النوع' },
-      { key: 'date', label: t('common.date'), formatter: (val) => formatDateAR(val) },
-      { key: 'description', label: t('common.description') },
-      { key: 'amount', label: t('common.amount') },
-      { key: 'currency', label: t('common.currency') },
-      { key: 'category', label: t('common.category') },
-      { key: 'partner', label: t('reports.partner') || 'الطرف' }
-    ];
+      const columns = [
+        { header: t('reports.type') || 'النوع', accessor: (row) => row.type },
+        { header: t('common.date'), accessor: (row) => row.date ? formatDateAR(row.date) : '-' },
+        { header: t('common.description'), accessor: (row) => row.description || '-' },
+        { header: t('common.amount'), accessor: (row) => parseFloat(row.amount || 0).toLocaleString('ar-EG') },
+        { header: t('common.currency'), accessor: (row) => row.currency || '-' },
+        { header: t('common.category'), accessor: (row) => row.category || '-' },
+        { header: t('reports.partner') || 'الطرف', accessor: (row) => row.partner || '-' }
+      ];
 
-    exportToPDF(reportData, {
-      title: `${t('common.reports')} - ${t(`reports.${selectedPeriod}`)}`,
-      columns,
-      filename: `report_${selectedPeriod}_${new Date().toISOString().split('T')[0]}.pdf`,
-      locale: locale
-    });
+      await exportReportPDF(
+        `${t('common.reports')} - ${t(`reports.${selectedPeriod}`) || selectedPeriod}`,
+        reportData,
+        columns,
+        tenant?.name
+      );
 
-    toast({ title: t('reports.reportGenerated') });
+      toast({ title: t('reports.reportGenerated') || 'تم تصدير التقرير بنجاح' });
+    } catch (error) {
+      console.error('Export PDF error:', error);
+      toast({ 
+        title: 'خطأ', 
+        description: 'حدث خطأ في تصدير التقرير',
+        variant: 'destructive' 
+      });
+    }
   };
 
   const handleExportExcel = () => {
