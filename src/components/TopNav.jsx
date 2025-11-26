@@ -14,10 +14,10 @@ import { toast } from '@/components/ui/use-toast';
 const TopNav = ({ onMenuClick, isOffline: propIsOffline = false, pendingSyncCount: propPendingSyncCount = 0 }) => {
   const { user } = useAuth();
   const { t } = useLanguage();
-  const [isOffline, setIsOffline] = useState(!navigator.onLine);
+  const [isOffline, setIsOffline] = useState(() => typeof window !== 'undefined' ? !navigator.onLine : false);
   const [pendingSyncCount, setPendingSyncCount] = useState(propPendingSyncCount);
   const [isSyncing, setIsSyncing] = useState(false);
-  const [connectionStatus, setConnectionStatus] = useState(navigator.onLine ? 'online' : 'offline');
+  const [connectionStatus, setConnectionStatus] = useState(() => typeof window !== 'undefined' && navigator.onLine ? 'online' : 'offline');
 
   useEffect(() => {
     const handleOnline = async () => {
@@ -39,18 +39,22 @@ const TopNav = ({ onMenuClick, isOffline: propIsOffline = false, pendingSyncCoun
 
     // Check periodically
     const interval = setInterval(async () => {
-      const online = navigator.onLine;
-      setIsOffline(!online);
-      setConnectionStatus(online ? 'online' : 'offline');
-      if (online && user?.tenant_id) {
-        const count = await getPendingCount(user.tenant_id);
-        setPendingSyncCount(count);
+      if (typeof window !== 'undefined' && navigator) {
+        const online = navigator.onLine;
+        setIsOffline(!online);
+        setConnectionStatus(online ? 'online' : 'offline');
+        if (online && user?.tenant_id) {
+          const count = await getPendingCount(user.tenant_id);
+          setPendingSyncCount(count);
+        }
       }
     }, 5000);
 
     return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('online', handleOnline);
+        window.removeEventListener('offline', handleOffline);
+      }
       clearInterval(interval);
     };
   }, [user?.tenant_id]);
@@ -159,7 +163,7 @@ const TopNav = ({ onMenuClick, isOffline: propIsOffline = false, pendingSyncCoun
         </div>
 
         {/* Manual Sync Button */}
-        {pendingSyncCount > 0 && isOnline() && (
+        {pendingSyncCount > 0 && typeof window !== 'undefined' && isOnline() && (
           <Button
             variant="outline"
             size="sm"
@@ -180,7 +184,7 @@ const TopNav = ({ onMenuClick, isOffline: propIsOffline = false, pendingSyncCoun
           </Button>
         )}
 
-        {pendingSyncCount > 0 && !isOnline() && (
+        {pendingSyncCount > 0 && typeof window !== 'undefined' && !isOnline() && (
           <div className="flex items-center gap-2 px-3 py-1.5 bg-orange-100 dark:bg-orange-900/20 rounded-lg border border-orange-200 dark:border-orange-800">
             <CloudOff className="h-4 w-4 text-orange-600 dark:text-orange-400" />
             <span className="text-xs text-orange-800 dark:text-orange-200 hidden sm:inline">

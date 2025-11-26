@@ -15,7 +15,7 @@ const MainLayout = ({ children }) => {
     }
     return true;
   });
-  const [isOffline, setIsOffline] = useState(!navigator.onLine);
+  const [isOffline, setIsOffline] = useState(() => typeof window !== 'undefined' && navigator ? !navigator.onLine : false);
   const [pendingSyncCount, setPendingSyncCount] = useState(0);
 
   // Initialize offline service
@@ -112,12 +112,16 @@ const MainLayout = ({ children }) => {
       setIsOffline(true);
     };
 
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
+    if (typeof window !== 'undefined') {
+      window.addEventListener('online', handleOnline);
+      window.addEventListener('offline', handleOffline);
+    }
 
     return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('online', handleOnline);
+        window.removeEventListener('offline', handleOffline);
+      }
     };
   }, [user?.tenant_id, user?.id]);
   
