@@ -52,8 +52,8 @@ const AdminSettingsPage = () => {
         support_email: data.support_email || '',
         mobile_app_android_url: data.mobile_app_android_url || '',
         mobile_app_windows_url: data.mobile_app_windows_url || '',
-        vapid_public_key: data.vapid_public_key || '',
-        vapid_private_key: data.vapid_private_key || ''
+        vapid_public_key: data.vapid_public_key || 'BLTLp5pwZyDL8OCGuEv-occebm9Z7KB3UDS5KJ2VjBToYprIKMrtS2ZXob5uEArjkcECSGwKH8iWGWnpo8bTw9c',
+        vapid_private_key: data.vapid_private_key || 'hNoVtIuf9kOvXP5QmeWyu9bHMPQ9yCBY3Wn9V0CuQVE'
       });
     } catch (error) {
       console.error('Load settings error:', error);
@@ -320,6 +320,65 @@ const AdminSettingsPage = () => {
             >
               <Save className="h-4 w-4 ml-2 rtl:mr-2 rtl:ml-0" />
               {saving ? 'جاري الحفظ...' : 'حفظ الروابط'}
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {/* VAPID Keys Settings */}
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+            <Smartphone className="h-5 w-5" />
+            إعدادات VAPID للإشعارات الخارجية
+          </h2>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            المفاتيح المطلوبة لتشغيل الإشعارات الخارجية (Push Notifications). راجع ملف <code className="bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded text-xs">VAPID_KEY_GUIDE.md</code> لمعرفة كيفية الحصول عليها.
+          </p>
+        </div>
+        <div className="p-6 space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
+              <Shield className="h-4 w-4" />
+              VAPID Public Key
+            </label>
+            <input
+              type="text"
+              value={settings.vapid_public_key}
+              onChange={(e) => setSettings({ ...settings, vapid_public_key: e.target.value })}
+              className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent font-mono text-sm"
+              placeholder="BEl62iUYgUivxIkv69yViEuiBIa40HIWz..."
+            />
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              المفتاح العام - يستخدم في المتصفح (يمكن عرضه)
+            </p>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
+              <Lock className="h-4 w-4" />
+              VAPID Private Key
+            </label>
+            <input
+              type="password"
+              value={settings.vapid_private_key}
+              onChange={(e) => setSettings({ ...settings, vapid_private_key: e.target.value })}
+              className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent font-mono text-sm"
+              placeholder="xK7YqP9R2S5T8U1V4W6X9Y0Z3..."
+            />
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              المفتاح الخاص - يستخدم في الخادم فقط (يُحفظ بشكل آمن - لا يشارك)
+            </p>
+          </div>
+
+          <div className="flex justify-end pt-4">
+            <Button
+              onClick={handleSaveSettings}
+              disabled={saving}
+              className="bg-gradient-to-r from-orange-500 to-pink-500 text-white"
+            >
+              <Save className="h-4 w-4 ml-2 rtl:mr-2 rtl:ml-0" />
+              {saving ? 'جاري الحفظ...' : 'حفظ المفاتيح'}
             </Button>
           </div>
         </div>

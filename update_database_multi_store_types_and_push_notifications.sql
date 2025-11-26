@@ -453,6 +453,36 @@ COMMENT ON COLUMN notification_settings.notification_type IS 'نوع الإشع�
 COMMENT ON COLUMN notification_settings.show_push IS 'تفعيل الإشعارات الخارجية (Push Notifications)';
 
 -- ============================================
+-- القسم 9: إضافة VAPID Keys الافتراضية
+-- ============================================
+
+-- إضافة/تحديث VAPID Public Key
+INSERT INTO system_settings (key, value, description, updated_by)
+VALUES (
+    'vapid_public_key',
+    'BLTLp5pwZyDL8OCGuEv-occebm9Z7KB3UDS5KJ2VjBToYprIKMrtS2ZXob5uEArjkcECSGwKH8iWGWnpo8bTw9c',
+    'VAPID Public Key للإشعارات الخارجية - تم توليده تلقائياً',
+    NULL
+)
+ON CONFLICT (key) DO UPDATE SET 
+    value = EXCLUDED.value,
+    description = EXCLUDED.description,
+    updated_at = NOW();
+
+-- إضافة/تحديث VAPID Private Key
+INSERT INTO system_settings (key, value, description, updated_by)
+VALUES (
+    'vapid_private_key',
+    'hNoVtIuf9kOvXP5QmeWyu9bHMPQ9yCBY3Wn9V0CuQVE',
+    'VAPID Private Key للإشعارات الخارجية - للخادم فقط - تم توليده تلقائياً',
+    NULL
+)
+ON CONFLICT (key) DO UPDATE SET 
+    value = EXCLUDED.value,
+    description = EXCLUDED.description,
+    updated_at = NOW();
+
+-- ============================================
 -- إنهاء السكريبت
 -- ============================================
 

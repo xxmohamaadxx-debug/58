@@ -173,14 +173,15 @@ const NotificationSettingsPage = () => {
       const permission = await Notification.requestPermission();
       
       if (permission === 'granted') {
-        // الحصول على VAPID Public Key من إعدادات النظام
+        // الحصول على VAPID Public Key من إعدادات النظام أو استخدام القيمة الافتراضية
         const settings = await neonService.getSystemSettings();
-        const vapidPublicKey = settings.vapid_public_key;
+        const vapidPublicKey = settings.vapid_public_key || 
+          'BLTLp5pwZyDL8OCGuEv-occebm9Z7KB3UDS5KJ2VjBToYprIKMrtS2ZXob5uEArjkcECSGwKH8iWGWnpo8bTw9c';
         
         if (!vapidPublicKey) {
           toast({
             title: 'خطأ',
-            description: 'لم يتم تكوين VAPID Public Key. يرجى التواصل مع الأدمن لإضافته في إعدادات النظام.',
+            description: 'لم يتم تكوين VAPID Public Key. يرجى التواصل مع الأدمن.',
             variant: 'destructive'
           });
           return;
