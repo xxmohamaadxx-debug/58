@@ -278,9 +278,18 @@ export default defineConfig({
 				},
 				chunkSizeWarningLimit: 1000,
 			},
+			onwarn(warning, warn) {
+				// Ignore certain warnings
+				if (warning.code === 'CIRCULAR_DEPENDENCY') return;
+				if (warning.code === 'MODULE_LEVEL_DIRECTIVE') return;
+				warn(warning);
+			},
 		},
 		chunkSizeWarningLimit: 1000,
 		sourcemap: false,
 		reportCompressedSize: false,
+		commonjsOptions: {
+			transformMixedEsModules: true,
+		},
 	}
 });
