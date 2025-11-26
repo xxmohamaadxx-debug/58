@@ -2,10 +2,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { Bell, Search, User, Menu, Shield } from 'lucide-react';
+import { Search, User, Menu, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import Logo from '@/components/Logo';
+import Notifications from '@/components/Notifications';
 
 const TopNav = ({ onMenuClick }) => {
   const { user } = useAuth();
@@ -47,10 +48,7 @@ const TopNav = ({ onMenuClick }) => {
           </Link>
         )}
         
-        <Button variant="ghost" size="icon" className="relative">
-          <Bell className="h-5 w-5 text-gray-500" />
-          <span className="absolute top-2 right-2 h-2 w-2 bg-red-500 rounded-full ring-2 ring-white"></span>
-        </Button>
+        <Notifications />
         
         <div className="flex items-center gap-3 pl-4 rtl:pr-4 rtl:pl-0 border-l rtl:border-r rtl:border-l-0 border-gray-200 dark:border-gray-700">
           <div className="text-right rtl:text-left hidden sm:block">

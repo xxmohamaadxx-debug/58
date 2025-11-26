@@ -498,4 +498,220 @@ export const neonService = {
   // Logs
   getAuditLogs: (tenantId) => getByTenant('audit_logs', tenantId),
   log: auditLog,
+
+  // Notifications
+  getNotifications: async (userId) => {
+    try {
+      const result = await sql`
+        SELECT * FROM notifications 
+        WHERE user_id = ${userId}
+        ORDER BY created_at DESC
+        LIMIT 100
+      `;
+      return result || [];
+    } catch (error) {
+      console.error('getNotifications error:', error);
+      return [];
+    }
+  },
+
+  getUnreadNotificationsCount: async (userId) => {
+    try {
+      const result = await sql`
+        SELECT COUNT(*) as count 
+        FROM notifications 
+        WHERE user_id = ${userId} AND is_read = false
+      `;
+      return parseInt(result[0]?.count || 0);
+    } catch (error) {
+      console.error('getUnreadNotificationsCount error:', error);
+      return 0;
+    }
+  },
+
+  markNotificationAsRead: async (notificationId, userId) => {
+    try {
+      await sql`
+        UPDATE notifications 
+        SET is_read = true, read_at = NOW()
+        WHERE id = ${notificationId} AND user_id = ${userId}
+      `;
+      return true;
+    } catch (error) {
+      console.error('markNotificationAsRead error:', error);
+      throw error;
+    }
+  },
+
+  markAllNotificationsAsRead: async (userId) => {
+    try {
+      await sql`
+        UPDATE notifications 
+        SET is_read = true, read_at = NOW()
+        WHERE user_id = ${userId} AND is_read = false
+      `;
+      return true;
+    } catch (error) {
+      console.error('markAllNotificationsAsRead error:', error);
+      throw error;
+    }
+  },
+
+  createNotification: async (notificationData) => {
+    try {
+      const result = await sql`
+        INSERT INTO notifications (tenant_id, user_id, type, title, message)
+        VALUES (
+          ${notificationData.tenant_id || null},
+          ${notificationData.user_id},
+          ${notificationData.type || 'system'},
+          ${notificationData.title},
+          ${notificationData.message}
+        )
+        RETURNING *
+      `;
+      return result[0];
+    } catch (error) {
+      console.error('createNotification error:', error);
+      throw error;
+    }
+  },
+
+  // Support Tickets
+  getSupportTickets: async (tenantId, userId, isAdmin = false) => {
+    try {
+      let result;
+      if (isAdmin) {
+        // Admin can see all tickets
+        result = await sql`
+          SELECT st.*, u.name as user_name, u.email as user_email,
+                 t.name as tenant_name
+          FROM support_tickets st
+          LEFT JOIN users u ON st.user_id = u.id
+          LEFT JOIN tenants t ON st.tenant_id = t.id
+          ORDER BY st.created_at DESC
+          LIMIT 100
+        `;
+      } else {
+        // Regular user sees only their tenant tickets
+        result = await sql`
+          SELECT st.*, u.name as user_name, u.email as user_email
+          FROM support_tickets st
+          LEFT JOIN users u ON st.user_id = u.id
+          WHERE st.tenant_id = ${tenantId}
+          ORDER BY st.created_at DESC
+          LIMIT 100
+        `;
+      }
+      return result || [];
+    } catch (error) {
+      console.error('getSupportTickets error:', error);
+      return [];
+    }
+  },
+
+  createSupportTicket: async (ticketData) => {
+    try {
+      const result = await sql`
+        INSERT INTO support_tickets (tenant_id, user_id, subject, message, priority, is_from_admin)
+        VALUES (
+          ${ticketData.tenant_id},
+          ${ticketData.user_id || null},
+          ${ticketData.subject},
+          ${ticketData.message},
+          ${ticketData.priority || 'medium'},
+          ${ticketData.is_from_admin || false}
+        )
+        RETURNING *
+      `;
+      return result[0];
+    } catch (error) {
+      console.error('createSupportTicket error:', error);
+      throw error;
+    }
+  },
+
+  getSupportTicketMessages: async (ticketId) => {
+    try {
+      const result = await sql`
+        SELECT sm.*, u.name as user_name, u.email as user_email
+        FROM support_messages sm
+        LEFT JOIN users u ON sm.user_id = u.id
+        WHERE sm.ticket_id = ${ticketId}
+        ORDER BY sm.created_at ASC
+      `;
+      return result || [];
+    } catch (error) {
+      console.error('getSupportTicketMessages error:', error);
+      return [];
+    }
+  },
+
+  addSupportTicketMessage: async (messageData) => {
+    try {
+      const result = await sql`
+        INSERT INTO support_messages (ticket_id, user_id, message, is_from_admin, attachments)
+        VALUES (
+          ${messageData.ticket_id},
+          ${messageData.user_id || null},
+          ${messageData.message},
+          ${messageData.is_from_admin || false},
+          ${messageData.attachments ? JSON.stringify(messageData.attachments) : null}
+        )
+        RETURNING *
+      `;
+      
+      // Update ticket updated_at
+      await sql`
+        UPDATE support_tickets 
+        SET updated_at = NOW()
+        WHERE id = ${messageData.ticket_id}
+      `;
+      
+      return result[0];
+    } catch (error) {
+      console.error('addSupportTicketMessage error:', error);
+      throw error;
+    }
+  },
+
+  updateSupportTicketStatus: async (ticketId, status, assignedTo = null) => {
+    try {
+      await sql`
+        UPDATE support_tickets 
+        SET status = ${status}, 
+            assigned_to = ${assignedTo || null},
+            resolved_at = ${status === 'resolved' ? sql`NOW()` : null},
+            updated_at = NOW()
+        WHERE id = ${ticketId}
+      `;
+      return true;
+    } catch (error) {
+      console.error('updateSupportTicketStatus error:', error);
+      throw error;
+    }
+  },
+
+  // Update user permissions (allow store owner to edit accountant even with permissions)
+  updateUserPermissions: async (userId, data, tenantId, isStoreOwner = false) => {
+    try {
+      // If store owner, allow editing even if user has permissions
+      if (isStoreOwner) {
+        const columns = Object.keys(data);
+        const setClause = columns.map((col, i) => `${col} = $${i + 2}`).join(', ');
+        const values = [userId, ...Object.values(data)];
+        const query = `UPDATE users SET ${setClause} WHERE id = $1 AND tenant_id = $${values.length + 1} RETURNING *`;
+        values.push(tenantId);
+        const result = await sql(query, values);
+        if (!result || result.length === 0) throw new Error('User not found or access denied');
+        return result[0];
+      } else {
+        // Regular update with tenant check
+        return await updateRecord('users', userId, data, tenantId);
+      }
+    } catch (error) {
+      console.error('updateUserPermissions error:', error);
+      throw error;
+    }
+  },
 };
