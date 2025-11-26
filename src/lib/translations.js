@@ -657,6 +657,26 @@ export const translations = {
       code: "الكود",
       name: "الاسم",
       description: "الوصف"
+    },
+    contractor: {
+      title: "متجر المقاولين",
+      projects: "المشاريع",
+      projectItems: "بنود الكميات (BOQ)",
+      addProject: "إضافة مشروع",
+      addProjectItem: "إضافة بند",
+      projectCode: "كود المشروع",
+      projectName: "اسم المشروع",
+      client: "العميل",
+      startDate: "تاريخ البداية",
+      endDate: "تاريخ النهاية",
+      contractValue: "قيمة العقد",
+      status: "الحالة",
+      itemCode: "كود البند",
+      itemName: "اسم البند",
+      quantity: "الكمية",
+      unit: "الوحدة",
+      unitPrice: "سعر الوحدة",
+      total: "الإجمالي"
     }
   }
 };

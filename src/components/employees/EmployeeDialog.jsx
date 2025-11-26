@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { CURRENCIES, EMPLOYEE_STATUS } from '@/lib/constants';
@@ -51,6 +51,9 @@ const EmployeeDialog = ({ open, onOpenChange, employee, onSave }) => {
           <DialogTitle>
             {employee ? t('common.edit') : t('common.add')} {t('employees.employee')}
           </DialogTitle>
+          <DialogDescription>
+            {employee ? 'قم بتعديل بيانات الموظف' : 'قم بإدخال بيانات موظف جديد'}
+          </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>

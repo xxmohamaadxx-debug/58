@@ -1562,4 +1562,343 @@ export const neonService = {
       throw error;
     }
   },
+
+  // ============================================
+  // Contractor Store Management
+  // ============================================
+
+  // Units
+  getUnits: async (tenantId) => {
+    if (!tenantId) return [];
+    try {
+      const result = await sql`
+        SELECT * FROM units 
+        WHERE tenant_id = ${tenantId} AND is_active = true
+        ORDER BY category, name_ar
+      `;
+      return result || [];
+    } catch (error) {
+      console.error('getUnits error:', error);
+      return [];
+    }
+  },
+
+  createUnit: async (data, tenantId) => {
+    return createRecord('units', data, tenantId);
+  },
+
+  updateUnit: async (id, data, tenantId) => {
+    return updateRecord('units', id, data, tenantId);
+  },
+
+  deleteUnit: async (id, tenantId) => {
+    return deleteRecord('units', id, tenantId);
+  },
+
+  // Products
+  getProducts: async (tenantId) => {
+    if (!tenantId) return [];
+    try {
+      const result = await sql`
+        SELECT p.*, u.name_ar as unit_name, u.code as unit_code
+        FROM products p
+        LEFT JOIN units u ON p.unit_id = u.id
+        WHERE p.tenant_id = ${tenantId} AND p.is_active = true
+        ORDER BY p.name
+      `;
+      return result || [];
+    } catch (error) {
+      console.error('getProducts error:', error);
+      return [];
+    }
+  },
+
+  createProduct: async (data, tenantId) => {
+    return createRecord('products', data, tenantId);
+  },
+
+  updateProduct: async (id, data, tenantId) => {
+    return updateRecord('products', id, data, tenantId);
+  },
+
+  deleteProduct: async (id, tenantId) => {
+    return deleteRecord('products', id, tenantId);
+  },
+
+  // Contractor Projects
+  getContractorProjects: async (tenantId, status = null) => {
+    if (!tenantId) return [];
+    try {
+      let query;
+      if (status) {
+        query = sql`
+          SELECT cp.*, p.name as client_name_display, p.phone as client_phone
+          FROM contractor_projects cp
+          LEFT JOIN partners p ON cp.client_id = p.id
+          WHERE cp.tenant_id = ${tenantId} AND cp.status = ${status}
+          ORDER BY cp.start_date DESC, cp.created_at DESC
+        `;
+      } else {
+        query = sql`
+          SELECT cp.*, p.name as client_name_display, p.phone as client_phone
+          FROM contractor_projects cp
+          LEFT JOIN partners p ON cp.client_id = p.id
+          WHERE cp.tenant_id = ${tenantId}
+          ORDER BY cp.start_date DESC, cp.created_at DESC
+        `;
+      }
+      const result = await query;
+      return result || [];
+    } catch (error) {
+      console.error('getContractorProjects error:', error);
+      return [];
+    }
+  },
+
+  createContractorProject: async (data, tenantId) => {
+    return createRecord('contractor_projects', data, tenantId);
+  },
+
+  updateContractorProject: async (id, data, tenantId) => {
+    return updateRecord('contractor_projects', id, data, tenantId);
+  },
+
+  deleteContractorProject: async (id, tenantId) => {
+    return deleteRecord('contractor_projects', id, tenantId);
+  },
+
+  // Project Items (BOQ)
+  getProjectItems: async (tenantId, projectId = null) => {
+    if (!tenantId) return [];
+    try {
+      let query;
+      if (projectId) {
+        query = sql`
+          SELECT pi.*, u.name_ar as unit_name, u.code as unit_code
+          FROM project_items pi
+          LEFT JOIN units u ON pi.unit_id = u.id
+          WHERE pi.tenant_id = ${tenantId} AND pi.project_id = ${projectId}
+          ORDER BY pi.sort_order, pi.created_at
+        `;
+      } else {
+        query = sql`
+          SELECT pi.*, u.name_ar as unit_name, u.code as unit_code
+          FROM project_items pi
+          LEFT JOIN units u ON pi.unit_id = u.id
+          WHERE pi.tenant_id = ${tenantId}
+          ORDER BY pi.project_id, pi.sort_order
+        `;
+      }
+      const result = await query;
+      return result || [];
+    } catch (error) {
+      console.error('getProjectItems error:', error);
+      return [];
+    }
+  },
+
+  createProjectItem: async (data, tenantId) => {
+    return createRecord('project_items', data, tenantId);
+  },
+
+  updateProjectItem: async (id, data, tenantId) => {
+    return updateRecord('project_items', id, data, tenantId);
+  },
+
+  deleteProjectItem: async (id, tenantId) => {
+    return deleteRecord('project_items', id, tenantId);
+  },
+
+  // Material Deliveries
+  getMaterialDeliveries: async (tenantId, projectId = null, startDate = null, endDate = null) => {
+    if (!tenantId) return [];
+    try {
+      let query;
+      if (projectId) {
+        if (startDate && endDate) {
+          query = sql`
+            SELECT md.*, ftp.name_ar as supplier_name_display,
+                   u.name_ar as unit_name, u.code as unit_code
+            FROM material_deliveries md
+            LEFT JOIN partners ftp ON md.supplier_id = ftp.id
+            LEFT JOIN units u ON md.unit_id = u.id
+            WHERE md.tenant_id = ${tenantId} AND md.project_id = ${projectId}
+            AND DATE(md.delivery_date) BETWEEN ${startDate} AND ${endDate}
+            ORDER BY md.delivery_date DESC
+          `;
+        } else {
+          query = sql`
+            SELECT md.*, ftp.name_ar as supplier_name_display,
+                   u.name_ar as unit_name, u.code as unit_code
+            FROM material_deliveries md
+            LEFT JOIN partners ftp ON md.supplier_id = ftp.id
+            LEFT JOIN units u ON md.unit_id = u.id
+            WHERE md.tenant_id = ${tenantId} AND md.project_id = ${projectId}
+            ORDER BY md.delivery_date DESC
+          `;
+        }
+      } else {
+        query = sql`
+          SELECT md.*, ftp.name_ar as supplier_name_display,
+                 u.name_ar as unit_name, u.code as unit_code
+          FROM material_deliveries md
+          LEFT JOIN partners ftp ON md.supplier_id = ftp.id
+          LEFT JOIN units u ON md.unit_id = u.id
+          WHERE md.tenant_id = ${tenantId}
+          ORDER BY md.delivery_date DESC
+        `;
+      }
+      const result = await query;
+      return result || [];
+    } catch (error) {
+      console.error('getMaterialDeliveries error:', error);
+      return [];
+    }
+  },
+
+  createMaterialDelivery: async (data, tenantId) => {
+    return createRecord('material_deliveries', data, tenantId);
+  },
+
+  updateMaterialDelivery: async (id, data, tenantId) => {
+    return updateRecord('material_deliveries', id, data, tenantId);
+  },
+
+  deleteMaterialDelivery: async (id, tenantId) => {
+    return deleteRecord('material_deliveries', id, tenantId);
+  },
+
+  // Client Price Lists
+  getClientPriceLists: async (tenantId, clientId = null) => {
+    if (!tenantId) return [];
+    try {
+      let query;
+      if (clientId) {
+        query = sql`
+          SELECT cpl.*, u.name_ar as unit_name, u.code as unit_code
+          FROM client_price_lists cpl
+          LEFT JOIN units u ON cpl.unit_id = u.id
+          WHERE cpl.tenant_id = ${tenantId} AND cpl.client_id = ${clientId} AND cpl.is_active = true
+          ORDER BY cpl.product_name
+        `;
+      } else {
+        query = sql`
+          SELECT cpl.*, u.name_ar as unit_name, u.code as unit_code
+          FROM client_price_lists cpl
+          LEFT JOIN units u ON cpl.unit_id = u.id
+          WHERE cpl.tenant_id = ${tenantId} AND cpl.is_active = true
+          ORDER BY cpl.client_id, cpl.product_name
+        `;
+      }
+      const result = await query;
+      return result || [];
+    } catch (error) {
+      console.error('getClientPriceLists error:', error);
+      return [];
+    }
+  },
+
+  createClientPriceList: async (data, tenantId) => {
+    return createRecord('client_price_lists', data, tenantId);
+  },
+
+  updateClientPriceList: async (id, data, tenantId) => {
+    return updateRecord('client_price_lists', id, data, tenantId);
+  },
+
+  deleteClientPriceList: async (id, tenantId) => {
+    return deleteRecord('client_price_lists', id, tenantId);
+  },
+
+  // Project Payments
+  getProjectPayments: async (tenantId, projectId = null) => {
+    if (!tenantId) return [];
+    try {
+      let query;
+      if (projectId) {
+        query = sql`
+          SELECT * FROM project_payments 
+          WHERE tenant_id = ${tenantId} AND project_id = ${projectId}
+          ORDER BY payment_date DESC
+        `;
+      } else {
+        query = sql`
+          SELECT * FROM project_payments 
+          WHERE tenant_id = ${tenantId}
+          ORDER BY payment_date DESC
+        `;
+      }
+      const result = await query;
+      return result || [];
+    } catch (error) {
+      console.error('getProjectPayments error:', error);
+      return [];
+    }
+  },
+
+  createProjectPayment: async (data, tenantId) => {
+    return createRecord('project_payments', data, tenantId);
+  },
+
+  updateProjectPayment: async (id, data, tenantId) => {
+    return updateRecord('project_payments', id, data, tenantId);
+  },
+
+  deleteProjectPayment: async (id, tenantId) => {
+    return deleteRecord('project_payments', id, tenantId);
+  },
+
+  // Project Summary Views
+  getActiveProjectsSummary: async (tenantId) => {
+    if (!tenantId) return [];
+    try {
+      const result = await sql`
+        SELECT * FROM active_projects_summary
+        WHERE tenant_id = ${tenantId}
+        ORDER BY start_date DESC
+      `;
+      return result || [];
+    } catch (error) {
+      console.error('getActiveProjectsSummary error:', error);
+      return [];
+    }
+  },
+
+  getProjectItemsSummary: async (tenantId, projectId) => {
+    if (!tenantId || !projectId) return null;
+    try {
+      const result = await sql`
+        SELECT * FROM project_items_summary
+        WHERE tenant_id = ${tenantId} AND project_id = ${projectId}
+        LIMIT 1
+      `;
+      return result[0] || null;
+    } catch (error) {
+      console.error('getProjectItemsSummary error:', error);
+      return null;
+    }
+  },
+
+  getMaterialDeliveriesSummary: async (tenantId, projectId = null) => {
+    if (!tenantId) return [];
+    try {
+      let query;
+      if (projectId) {
+        query = sql`
+          SELECT * FROM material_deliveries_summary
+          WHERE tenant_id = ${tenantId} AND project_id = ${projectId}
+        `;
+      } else {
+        query = sql`
+          SELECT * FROM material_deliveries_summary
+          WHERE tenant_id = ${tenantId}
+        `;
+      }
+      const result = await query;
+      return result || [];
+    } catch (error) {
+      console.error('getMaterialDeliveriesSummary error:', error);
+      return [];
+    }
+  },
 };

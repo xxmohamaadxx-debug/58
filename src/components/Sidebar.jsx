@@ -7,7 +7,7 @@ import {
   LayoutDashboard, FileText, ShoppingCart, Package, 
   Users, Settings, LogOut, Shield, BarChart, 
   CreditCard, Briefcase, X, MessageCircle, Database, Activity,
-  Wifi, Fuel, Store
+  Wifi, Fuel, Store, Building2
 } from 'lucide-react';
 import Logo from '@/components/Logo';
 
@@ -139,6 +139,19 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
         <Link to="/fuel-station" className={navItemClass('/fuel-station')} onClick={handleLinkClick}>
           <Fuel className="h-5 w-5 ltr:mr-3 rtl:ml-3" />
           متجر المحروقات
+        </Link>
+
+        {/* متجر المقاولين */}
+        <div className="px-4 mb-2 mt-6 text-xs font-semibold text-gray-400 uppercase tracking-wider">متجر المقاولين</div>
+        
+        <Link to="/contractor-projects" className={navItemClass('/contractor-projects')} onClick={handleLinkClick}>
+          <Building2 className="h-5 w-5 ltr:mr-3 rtl:ml-3" />
+          المشاريع
+        </Link>
+
+        <Link to="/contractor-project-items" className={navItemClass('/contractor-project-items')} onClick={handleLinkClick}>
+          <FileText className="h-5 w-5 ltr:mr-3 rtl:ml-3" />
+          بنود الكميات (BOQ)
         </Link>
 
         {user?.isSuperAdmin && (

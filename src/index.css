@@ -60,6 +60,12 @@
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    font-family: 'Cairo', 'Noto Naskh Arabic', 'Amiri', 'Segoe UI', Arial, sans-serif;
+  }
+
+  /* Arabic Font Fallback */
+  [dir="rtl"] {
+    font-family: 'Cairo', 'Noto Naskh Arabic', 'Amiri', 'Segoe UI', Arial, sans-serif;
   }
 
   /* RTL Support */

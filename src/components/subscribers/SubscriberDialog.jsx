@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
@@ -99,6 +99,9 @@ const SubscriberDialog = ({ open, onOpenChange, subscriber, onSave }) => {
           <DialogTitle>
             {subscriber ? 'تعديل مشترك' : 'إضافة مشترك جديد'}
           </DialogTitle>
+          <DialogDescription>
+            {subscriber ? 'قم بتعديل بيانات المشترك' : 'قم بإدخال بيانات المشترك الجديد'}
+          </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

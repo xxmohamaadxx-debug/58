@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 
@@ -55,6 +55,9 @@ const InventoryDialog = ({ open, onOpenChange, item, onSave }) => {
           <DialogTitle>
             {item ? t('common.edit') : t('common.add')} {t('inventory.product')}
           </DialogTitle>
+          <DialogDescription>
+            {item ? 'قم بتعديل بيانات المنتج في المستودع' : 'قم بإدخال بيانات منتج جديد في المستودع'}
+          </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">

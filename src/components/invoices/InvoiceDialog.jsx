@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
@@ -234,6 +234,9 @@ const InvoiceDialog = ({ open, onOpenChange, invoice, onSave, type }) => {
           <DialogTitle>
             {invoice ? t('common.edit') : t('common.add')} {type === 'in' ? t('common.invoicesIn') : t('common.invoicesOut')}
           </DialogTitle>
+          <DialogDescription>
+            {invoice ? 'قم بتعديل بيانات الفاتورة' : type === 'in' ? 'قم بإدخال بيانات فاتورة وارد جديدة' : 'قم بإدخال بيانات فاتورة صادر جديدة'}
+          </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

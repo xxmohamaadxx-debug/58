@@ -147,14 +147,19 @@ export const generateInvoicePDF = async (invoice, type, tenantName, logoPath = '
     headerData.push([isRTL ? t.status : t.status, invoice.status]);
   }
 
-  // جدول معلومات الفاتورة الأساسية
+  // جدول معلومات الفاتورة الأساسية - مع دعم أفضل للعربية
   autoTable(doc, {
     startY: startY,
     head: [[isRTL ? 'المعلومة' : 'Information', isRTL ? 'القيمة' : 'Value']],
     body: headerData,
     theme: 'plain',
     headStyles: { fillColor: [255, 140, 0], textColor: 255, fontStyle: 'bold' },
-    styles: { fontSize: 10, halign: isRTL ? 'right' : 'left' },
+    styles: { 
+      fontSize: 10, 
+      halign: isRTL ? 'right' : 'left',
+      font: 'helvetica', // jspdf-autotable يدعم العربية عبر Unicode
+      fontStyle: 'normal'
+    },
     margin: { left: 20, right: 20 },
     columnStyles: {
       0: { cellWidth: 50 },
@@ -232,7 +237,12 @@ export const generateInvoicePDF = async (invoice, type, tenantName, logoPath = '
       body: itemsData,
       theme: 'striped',
       headStyles: { fillColor: [255, 140, 0], textColor: 255, fontStyle: 'bold' },
-      styles: { fontSize: 9, halign: isRTL ? 'right' : 'left' },
+      styles: { 
+        fontSize: 9, 
+        halign: isRTL ? 'right' : 'left',
+        font: 'helvetica',
+        fontStyle: 'normal'
+      },
       margin: { left: 20, right: 20 },
       columnStyles: {
         0: { cellWidth: 15 },

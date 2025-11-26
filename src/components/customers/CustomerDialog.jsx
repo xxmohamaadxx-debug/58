@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 
@@ -51,6 +51,9 @@ const CustomerDialog = ({ open, onOpenChange, customer, onSave }) => {
           <DialogTitle>
             {customer ? 'تعديل عميل' : 'إضافة عميل'}
           </DialogTitle>
+          <DialogDescription>
+            {customer ? 'قم بتعديل بيانات العميل' : 'قم بإدخال بيانات العميل الجديد'}
+          </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>

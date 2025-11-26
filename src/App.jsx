@@ -39,6 +39,8 @@ const SubscribersPage = React.lazy(() => import('@/pages/SubscribersPage'));
 const InternetUsagePage = React.lazy(() => import('@/pages/InternetUsagePage'));
 const FuelStationPage = React.lazy(() => import('@/pages/FuelStationPage'));
 const StoreTypesPage = React.lazy(() => import('@/pages/StoreTypesPage'));
+const ContractorProjectsPage = React.lazy(() => import('@/pages/ContractorProjectsPage'));
+const ContractorProjectItemsPage = React.lazy(() => import('@/pages/ContractorProjectItemsPage'));
 const NotFoundPage = React.lazy(() => import('@/pages/NotFoundPage'));
 
 const LoadingSpinner = () => (
@@ -161,6 +163,8 @@ function App() {
                   <Route path="/subscribers" element={<PrivateRoute roles={['ANY']}><MainLayout><SubscriptionWarning /><SubscribersPage /></MainLayout></PrivateRoute>} />
                   <Route path="/internet-usage" element={<PrivateRoute roles={['ANY']}><MainLayout><SubscriptionWarning /><InternetUsagePage /></MainLayout></PrivateRoute>} />
                   <Route path="/fuel-station" element={<PrivateRoute roles={['ANY']}><MainLayout><SubscriptionWarning /><FuelStationPage /></MainLayout></PrivateRoute>} />
+                  <Route path="/contractor-projects" element={<PrivateRoute roles={['ANY']}><MainLayout><SubscriptionWarning /><ContractorProjectsPage /></MainLayout></PrivateRoute>} />
+                  <Route path="/contractor-project-items" element={<PrivateRoute roles={['ANY']}><MainLayout><SubscriptionWarning /><ContractorProjectItemsPage /></MainLayout></PrivateRoute>} />
                   <Route path="/store-types" element={<PrivateRoute roles={['SUPER_ADMIN']}><MainLayout><StoreTypesPage /></MainLayout></PrivateRoute>} />
                   
                   <Route path="/" element={<Navigate to="/dashboard" replace />} />

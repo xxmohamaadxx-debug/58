@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 
@@ -57,6 +57,9 @@ const StoreTypeDialog = ({ open, onOpenChange, storeType, onSave }) => {
           <DialogTitle>
             {storeType ? 'تعديل نوع متجر' : 'إضافة نوع متجر جديد'}
           </DialogTitle>
+          <DialogDescription>
+            {storeType ? 'قم بتعديل بيانات نوع المتجر' : 'قم بإدخال بيانات نوع متجر جديد'}
+          </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

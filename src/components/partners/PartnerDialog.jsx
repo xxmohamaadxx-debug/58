@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 
@@ -49,6 +49,9 @@ const PartnerDialog = ({ open, onOpenChange, partner, onSave }) => {
           <DialogTitle>
             {partner ? t('common.edit') : t('common.add')} {t('partners.partner')}
           </DialogTitle>
+          <DialogDescription>
+            {partner ? 'قم بتعديل بيانات الشريك' : 'قم بإدخال بيانات الشريك الجديد'}
+          </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>

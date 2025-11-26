@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { CURRENCIES } from '@/lib/constants';
@@ -81,6 +81,9 @@ const FuelTransactionDialog = ({ open, onOpenChange, transaction, fuelTypes, onS
           <DialogTitle>
             {transaction ? 'تعديل معاملة محروقات' : 'إضافة معاملة محروقات جديدة'}
           </DialogTitle>
+          <DialogDescription>
+            {transaction ? 'قم بتعديل بيانات معاملة المحروقات' : 'قم بإدخال معاملة محروقات جديدة (بيع، شراء، تعديل، أو فقد)'}
+          </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

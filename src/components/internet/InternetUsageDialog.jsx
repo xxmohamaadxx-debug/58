@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { CURRENCIES } from '@/lib/constants';
@@ -77,6 +77,9 @@ const InternetUsageDialog = ({ open, onOpenChange, usage, subscribers, onSave })
           <DialogTitle>
             {usage ? 'تعديل سجل استخدام' : 'إضافة سجل استخدام جديد'}
           </DialogTitle>
+          <DialogDescription>
+            {usage ? 'قم بتعديل بيانات سجل استخدام الإنترنت' : 'قم بإدخال سجل استخدام إنترنت جديد للمشترك'}
+          </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

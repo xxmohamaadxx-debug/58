@@ -6,7 +6,7 @@ import { neonService } from '@/lib/neonService';
 import { Button } from '@/components/ui/button';
 import { Loader2, Plus, Store, Edit, Trash2, MessageCircle, Download, FileDown } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { SUBSCRIPTION_PLANS, CONTACT_INFO, ROLES } from '@/lib/constants';
 import { formatDateAR, formatDateForInput } from '@/lib/dateUtils';
 import { saveAs } from 'file-saver';
@@ -543,6 +543,9 @@ const AdminPanel = () => {
         <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
             <DialogHeader>
                 <DialogTitle>{t('adminPanel.createNewStore')}</DialogTitle>
+                <DialogDescription>
+                  قم بإنشاء متجر جديد وإعداد حساب مديره
+                </DialogDescription>
             </DialogHeader>
             <form onSubmit={handleCreateStore} className="space-y-4 py-4">
                 <div>
@@ -688,6 +691,9 @@ const AdminPanel = () => {
         <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
             <DialogHeader>
                 <DialogTitle>تعديل بيانات المتجر</DialogTitle>
+                <DialogDescription>
+                  قم بتعديل بيانات المتجر ونوعه واشتراكه
+                </DialogDescription>
             </DialogHeader>
             <div className="space-y-4 py-4">
                 <div>
@@ -786,6 +792,9 @@ const AdminPanel = () => {
         <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
             <DialogHeader>
                 <DialogTitle>تمديد الاشتراك</DialogTitle>
+                <DialogDescription>
+                  قم بتمديد اشتراك المتجر المحدد
+                </DialogDescription>
             </DialogHeader>
             <div className="space-y-4 py-4">
                 <div>

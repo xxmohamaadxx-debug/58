@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
@@ -78,6 +78,9 @@ const PaymentDialog = ({ open, onOpenChange, customer, onSave }) => {
           <DialogTitle>
             إضافة معاملة - {customer.name}
           </DialogTitle>
+          <DialogDescription>
+            قم بإدخال معاملة جديدة للعميل (دفعة، استلام، دين، أو رصيد)
+          </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">

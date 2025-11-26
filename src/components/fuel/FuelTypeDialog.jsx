@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 
@@ -48,6 +48,9 @@ const FuelTypeDialog = ({ open, onOpenChange, fuelType, onSave }) => {
           <DialogTitle>
             {fuelType ? 'تعديل نوع محروقات' : 'إضافة نوع محروقات جديد'}
           </DialogTitle>
+          <DialogDescription>
+            {fuelType ? 'قم بتعديل بيانات نوع المحروقات' : 'قم بإدخال بيانات نوع محروقات جديد'}
+          </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
