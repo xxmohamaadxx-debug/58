@@ -196,13 +196,14 @@ const LandingPage = () => {
     }
   ];
 
+  // Features with translations
   const features = [
-    { icon: Shield, title: 'أمان عالي', desc: 'نظام حماية متقدم ونسخ احتياطية' },
-    { icon: Database, title: 'نسخ احتياطية', desc: 'نسخ احتياطية تلقائية ويدوية' },
-    { icon: BarChart, title: 'تقارير متقدمة', desc: 'تقارير شاملة وملخصات تفصيلية' },
-    { icon: Smartphone, title: 'تطبيق جوال', desc: 'تطبيق جوال متاح للأندرويد والويندوز' },
-    { icon: Zap, title: 'سريع وخفيف', desc: 'أداء عالي وسرعة في التحميل' },
-    { icon: Headphones, title: 'دعم فني', desc: 'دعم فني متاح 24/7' }
+    { icon: Shield, titleKey: 'landing.feature1Title', descKey: 'landing.feature1Desc' },
+    { icon: Database, titleKey: 'landing.feature2Title', descKey: 'landing.feature2Desc' },
+    { icon: BarChart, titleKey: 'landing.feature3Title', descKey: 'landing.feature3Desc' },
+    { icon: Smartphone, titleKey: 'landing.feature4Title', descKey: 'landing.feature4Desc' },
+    { icon: Zap, titleKey: 'landing.feature5Title', descKey: 'landing.feature5Desc' },
+    { icon: Headphones, titleKey: 'landing.feature6Title', descKey: 'landing.feature6Desc' }
   ];
 
   return (
@@ -214,8 +215,8 @@ const LandingPage = () => {
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
       </div>
       <Helmet>
-        <title>نظام إبراهيم للمحاسبة - إدارة متكاملة للمتاجر</title>
-        <meta name="description" content="نظام إدارة محاسبي متكامل يدعم جميع أنواع المتاجر مع نسخ احتياطية وحماية عالية" />
+        <title>{t('landing.systemName')} - {t('landing.storeTypesSubtitle')}</title>
+        <meta name="description" content={t('landing.heroSubtitle')} />
       </Helmet>
 
       {/* Navigation */}
@@ -231,8 +232,8 @@ const LandingPage = () => {
                 <Logo size="md" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-white drop-shadow-lg">نظام إبراهيم</h1>
-                <p className="text-xs text-purple-200">للمحاسبة والإدارة</p>
+                <h1 className="text-xl font-bold text-white drop-shadow-lg">{t('landing.systemNameShort')}</h1>
+                <p className="text-xs text-purple-200">{t('landing.systemTagline')}</p>
               </div>
             </motion.div>
             <motion.div 
@@ -277,13 +278,11 @@ const LandingPage = () => {
                             e.stopPropagation();
                             if (setLocale && typeof setLocale === 'function') {
                               setLocale(lang.code);
-                              // Force update HTML dir attribute
+                              // Force update HTML dir and lang attributes
                               document.documentElement.lang = lang.code;
-                              if (lang.code === 'ar') {
-                                document.documentElement.dir = 'rtl';
-                              } else {
-                                document.documentElement.dir = 'ltr';
-                              }
+                              document.documentElement.dir = lang.code === 'ar' ? 'rtl' : 'ltr';
+                              // Force page reload to apply translations
+                              window.location.reload();
                             }
                             setIsLangMenuOpen(false);
                           }}
@@ -396,7 +395,7 @@ const LandingPage = () => {
             >
               <span className="relative z-10 flex items-center gap-2">
                 <Rocket className="h-5 w-5 group-hover:animate-bounce" />
-                طلب نسخة تجريبية مجانية
+                {t('landing.requestTrial')}
               </span>
               <motion.div
                 className="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 opacity-0 group-hover:opacity-100 transition-opacity"
@@ -410,7 +409,7 @@ const LandingPage = () => {
               className="text-lg px-8 py-6 glass border-2 border-white/30 text-white hover:border-orange-400 hover:bg-white/10 backdrop-blur-sm transition-all hover:scale-105 hover:shadow-xl hover:shadow-white/20"
             >
               <LogIn className="h-5 w-5 ml-2 rtl:mr-2 rtl:ml-0" />
-              تسجيل الدخول
+              {t('landing.loginButton')}
             </Button>
           </motion.div>
           <motion.div 
@@ -421,15 +420,15 @@ const LandingPage = () => {
           >
             <div className="flex items-center gap-3 glass px-6 py-3 rounded-full border border-white/20 hover:border-green-400/50 transition-all">
               <CheckCircle className="h-6 w-6 text-green-400" />
-              <span className="font-medium">نسخ احتياطية تلقائية</span>
+              <span className="font-medium">{t('landing.autoBackups')}</span>
             </div>
             <div className="flex items-center gap-3 glass px-6 py-3 rounded-full border border-white/20 hover:border-green-400/50 transition-all">
               <CheckCircle className="h-6 w-6 text-green-400" />
-              <span className="font-medium">حماية عالية</span>
+              <span className="font-medium">{t('landing.highSecurity')}</span>
             </div>
             <div className="flex items-center gap-3 glass px-6 py-3 rounded-full border border-white/20 hover:border-green-400/50 transition-all">
               <CheckCircle className="h-6 w-6 text-green-400" />
-              <span className="font-medium">دعم 24/7</span>
+              <span className="font-medium">{t('landing.support24_7')}</span>
             </div>
           </motion.div>
         </div>
@@ -444,7 +443,7 @@ const LandingPage = () => {
             viewport={{ once: true }}
             className="text-5xl font-black text-center text-white mb-16 drop-shadow-lg"
           >
-            مميزات النظام
+            {t('landing.featuresTitle')}
           </motion.h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {features.map((feature, index) => (
@@ -460,10 +459,10 @@ const LandingPage = () => {
                   <feature.icon className="h-8 w-8 text-orange-400" />
                 </div>
                 <h3 className="text-xl font-bold text-white mb-3 group-hover:text-orange-300 transition-colors">
-                  {feature.title}
+                  {t(feature.titleKey)}
                 </h3>
                 <p className="text-purple-200 leading-relaxed">
-                  {feature.desc}
+                  {t(feature.descKey)}
                 </p>
               </motion.div>
             ))}
@@ -480,7 +479,7 @@ const LandingPage = () => {
             viewport={{ once: true }}
             className="text-5xl font-black text-center text-white mb-6 drop-shadow-lg"
           >
-            أنواع المتاجر المدعومة
+            {t('landing.storeTypesTitle')}
           </motion.h2>
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
@@ -489,7 +488,7 @@ const LandingPage = () => {
             transition={{ delay: 0.2 }}
             className="text-center text-purple-200 mb-16 max-w-3xl mx-auto text-lg"
           >
-            نظام مرن يدعم جميع أنواع المتاجر مع ميزات مخصصة لكل نوع
+            {t('landing.storeTypesSubtitle')}
           </motion.p>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {storeTypes.map((type, index) => (
@@ -657,7 +656,7 @@ const LandingPage = () => {
             <div>
               <div className="flex items-center gap-2 mb-4">
                 <Logo size="sm" />
-                <span className="text-white font-bold">نظام إبراهيم</span>
+                <span className="text-white font-bold">{t('landing.systemNameShort')}</span>
               </div>
               <p className="text-sm text-purple-200 leading-relaxed">
                 نظام إدارة محاسبي متكامل ومتقدم لجميع أنواع المتاجر
@@ -684,19 +683,19 @@ const LandingPage = () => {
               <h4 className="text-white font-bold mb-6 text-lg">روابط سريعة</h4>
               <div className="space-y-3">
                 <Link to="/login" className="block glass px-4 py-3 rounded-xl border border-white/10 hover:border-orange-400/50 hover:bg-white/5 text-purple-200 hover:text-white transition-all">
-                  تسجيل الدخول
+                  {t('landing.loginButton')}
                 </Link>
                 <button
                   onClick={() => setTrialDialogOpen(true)}
                   className="w-full text-right glass px-4 py-3 rounded-xl border border-white/10 hover:border-orange-400/50 hover:bg-white/5 text-purple-200 hover:text-white transition-all"
                 >
-                  طلب نسخة تجريبية
+                  {t('landing.requestTrial')}
                 </button>
               </div>
             </div>
           </div>
           <div className="border-t border-white/10 mt-8 pt-8 text-center">
-            <p className="text-purple-300">&copy; {new Date().getFullYear()} نظام إبراهيم للمحاسبة. جميع الحقوق محفوظة.</p>
+            <p className="text-purple-300">{t('landing.footerCopyright').replace('{year}', new Date().getFullYear())}</p>
           </div>
         </div>
       </footer>
