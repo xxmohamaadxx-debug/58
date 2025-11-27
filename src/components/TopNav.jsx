@@ -197,8 +197,12 @@ const TopNav = ({ onMenuClick, isOffline: propIsOffline = false, pendingSyncCoun
                     key={lang.code}
                     whileHover={{ x: 5, backgroundColor: 'rgba(255, 140, 0, 0.1)' }}
                     whileTap={{ scale: 0.98 }}
-                    onClick={() => {
-                      setLocale(lang.code);
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      if (setLocale && typeof setLocale === 'function') {
+                        setLocale(lang.code);
+                      }
                       setIsLangMenuOpen(false);
                     }}
                     className={`w-full flex items-center gap-3 px-4 py-3 text-left rtl:text-right transition-all duration-200 ${

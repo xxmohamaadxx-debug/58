@@ -270,14 +270,20 @@ const DashboardPage = () => {
           return p.transaction_date === today;
         });
 
-        setStats({
-          incomeByCurrency,
-          expensesByCurrency,
-          employees: employees.filter(e => e?.status === 'Active').length,
-          lowStock: inventory.filter(i => Number(i?.quantity || 0) <= Number(i?.min_stock || 5)).length,
-          dailyProfitLoss: dailyProfitLoss || [],
-          todayProfitLoss: todayProfitLoss || null
-        });
+                    // حساب الموظفين النشطين بشكل صحيح
+                    const activeEmployees = employees.filter(e => {
+                      const status = e?.status || e?.employee_status;
+                      return status === 'Active' || status === 'active' || status === 'ACTIVE';
+                    }).length;
+
+                    setStats({
+                      incomeByCurrency,
+                      expensesByCurrency,
+                      employees: activeEmployees,
+                      lowStock: inventory.filter(i => Number(i?.quantity || 0) <= Number(i?.min_stock || 5)).length,
+                      dailyProfitLoss: dailyProfitLoss || [],
+                      todayProfitLoss: todayProfitLoss || null
+                    });
       } catch (error) {
         console.error("Dashboard load error:", error);
         // Set default stats on error - don't leave page blank

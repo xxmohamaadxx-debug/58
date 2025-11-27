@@ -129,6 +129,7 @@ const LandingPage = () => {
       nameEn: 'Trial',
       duration: '15 يوم',
       price: 'مجاني',
+      priceValue: 0,
       features: [
         'جميع المميزات',
         'دعم فني محدود',
@@ -141,7 +142,8 @@ const LandingPage = () => {
       name: 'شهري',
       nameEn: 'Monthly',
       duration: 'شهر واحد',
-      price: 'متغير',
+      price: '$5',
+      priceValue: 5,
       features: [
         'جميع المميزات',
         'دعم فني كامل',
@@ -155,7 +157,8 @@ const LandingPage = () => {
       name: 'نصف سنوي',
       nameEn: '6 Months',
       duration: '6 أشهر',
-      price: 'متغير',
+      price: '$30',
+      priceValue: 30,
       features: [
         'جميع المميزات',
         'دعم فني كامل',
@@ -170,7 +173,8 @@ const LandingPage = () => {
       name: 'سنوي',
       nameEn: 'Yearly',
       duration: 'سنة واحدة',
-      price: 'متغير',
+      price: '$40',
+      priceValue: 40,
       features: [
         'جميع المميزات',
         'دعم فني كامل',
@@ -551,8 +555,21 @@ const LandingPage = () => {
                   {plan.name}
                 </h3>
                 <p className="text-purple-200 mb-6">{plan.duration}</p>
-                <div className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-pink-400 mb-8">
-                  {plan.price}
+                <div className="mb-8">
+                  {plan.priceValue > 0 ? (
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-pink-400">
+                        {plan.price}
+                      </span>
+                      {plan.duration.includes('شهر') && (
+                        <span className="text-xl text-purple-300 font-medium">/شهر</span>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-pink-400">
+                      {plan.price}
+                    </div>
+                  )}
                 </div>
                 <ul className="space-y-4 mb-10">
                   {plan.features.map((feature, idx) => (
