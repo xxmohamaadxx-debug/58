@@ -418,12 +418,14 @@ const DashboardPage = () => {
         </motion.div>
       </motion.div>
 
-      <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 relative z-10"
-      >
+                  {/* Enhanced 3D KPI Cards Grid */}
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.5 }}
+                    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 relative z-10"
+                    style={{ perspective: '1200px' }}
+                  >
         {/* إجمالي الدخل لكل عملة */}
         {Object.entries(stats.incomeByCurrency).map(([currency, amount], idx) => {
           if (amount === 0) return null;
