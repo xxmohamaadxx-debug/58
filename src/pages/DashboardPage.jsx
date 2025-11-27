@@ -13,37 +13,147 @@ import { CURRENCIES } from '@/lib/constants';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend, ArcElement);
 
-const KPICard = ({ title, value, icon: Icon, trend, color, t }) => {
+const KPICard = ({ title, value, icon: Icon, trend, color, t, index = 0 }) => {
   return (
     <motion.div 
-      initial={{ opacity: 0, y: 20, scale: 0.95 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      whileHover={{ scale: 1.02, y: -5 }}
-      transition={{ duration: 0.3 }}
-      className="group relative bg-gradient-to-br from-white/90 to-white/70 dark:from-gray-800/90 dark:to-gray-800/70 backdrop-blur-xl p-6 rounded-2xl shadow-lg border border-gray-200/50 dark:border-gray-700/50 hover:shadow-2xl hover:shadow-orange-500/10 transition-all duration-300 overflow-hidden"
+      initial={{ opacity: 0, y: 30, scale: 0.9, rotateX: -15 }}
+      animate={{ opacity: 1, y: 0, scale: 1, rotateX: 0 }}
+      transition={{ 
+        duration: 0.5, 
+        delay: index * 0.1,
+        type: "spring",
+        stiffness: 100,
+        damping: 15
+      }}
+      whileHover={{ 
+        scale: 1.03, 
+        y: -8,
+        rotateY: 2,
+        transition: { duration: 0.2 }
+      }}
+      className="group relative overflow-hidden"
+      style={{ transformStyle: 'preserve-3d', perspective: '1000px' }}
     >
-      {/* Animated background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-orange-500/0 via-pink-500/0 to-purple-500/0 group-hover:from-orange-500/5 group-hover:via-pink-500/5 group-hover:to-purple-500/5 transition-all duration-500"></div>
-      
-      <div className="relative z-10 flex justify-between items-start">
-        <div className="flex-1">
-          <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">{title}</p>
-          <h3 className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white mt-1 bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
-            {value}
-          </h3>
+      {/* 3D Container with Glassmorphism */}
+      <div className="relative bg-gradient-to-br from-white/95 to-white/90 dark:from-gray-800/95 dark:to-gray-800/90 backdrop-blur-xl p-6 rounded-2xl shadow-xl border border-gray-200/50 dark:border-gray-700/50 overflow-hidden"
+        style={{
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.1) inset',
+        }}
+      >
+        {/* Animated Neon Glow Background */}
+        <motion.div
+          className="absolute inset-0 bg-gradient-to-br from-orange-500/0 via-pink-500/0 to-purple-500/0"
+          animate={{
+            background: [
+              'linear-gradient(135deg, rgba(255, 140, 0, 0) 0%, rgba(236, 72, 153, 0) 100%)',
+              'linear-gradient(135deg, rgba(255, 140, 0, 0.1) 0%, rgba(236, 72, 153, 0.1) 100%)',
+              'linear-gradient(135deg, rgba(255, 140, 0, 0) 0%, rgba(236, 72, 153, 0) 100%)',
+            ],
+          }}
+          transition={{
+            duration: 3,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
+        />
+
+        {/* Hover Glow Effect */}
+        <motion.div
+          className="absolute inset-0 bg-gradient-to-r from-orange-500/20 via-pink-500/20 to-purple-500/20 opacity-0 group-hover:opacity-100 blur-2xl"
+          transition={{ duration: 0.3 }}
+        />
+
+        {/* Floating Particles */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {[...Array(5)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-1 h-1 rounded-full bg-orange-400"
+              style={{
+                left: `${20 + i * 20}%`,
+                top: `${30 + (i % 2) * 40}%`,
+                opacity: 0.3,
+              }}
+              animate={{
+                y: [0, -20, 0],
+                opacity: [0.3, 0.8, 0.3],
+                scale: [1, 1.5, 1],
+              }}
+              transition={{
+                duration: 2 + i * 0.5,
+                repeat: Infinity,
+                delay: i * 0.3,
+                ease: 'easeInOut',
+              }}
+            />
+          ))}
         </div>
-        <div className={`p-4 rounded-xl ${color} shadow-lg group-hover:scale-110 group-hover:rotate-6 transition-all duration-300`}>
-          <Icon className="h-6 w-6 md:h-7 md:w-7 text-white" />
+        
+        <div className="relative z-10 flex justify-between items-start">
+          <div className="flex-1">
+            <motion.p 
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: index * 0.1 + 0.2 }}
+              className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3"
+            >
+              {title}
+            </motion.p>
+            <motion.h3 
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: index * 0.1 + 0.3, type: "spring" }}
+              className="text-2xl md:text-4xl font-black text-gray-900 dark:text-white mt-1 bg-gradient-to-r from-gray-900 via-gray-700 to-gray-900 dark:from-white dark:via-gray-200 dark:to-white bg-clip-text text-transparent"
+            >
+              {value}
+            </motion.h3>
+          </div>
+          <motion.div 
+            className={`p-4 rounded-2xl ${color} shadow-2xl relative overflow-hidden`}
+            whileHover={{ scale: 1.15, rotate: [0, -5, 5, -5, 0] }}
+            transition={{ type: "spring", stiffness: 300 }}
+          >
+            {/* Icon Glow */}
+            <motion.div
+              className="absolute inset-0 bg-white/20 rounded-2xl"
+              animate={{
+                opacity: [0.3, 0.6, 0.3],
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: 'easeInOut',
+              }}
+            />
+            <Icon className="h-6 w-6 md:h-8 md:w-8 text-white relative z-10" />
+          </motion.div>
         </div>
+        {trend && (
+          <motion.div 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.1 + 0.4 }}
+            className="mt-5 flex items-center text-xs md:text-sm relative z-10"
+          >
+            <motion.span 
+              className={`font-bold flex items-center gap-1 ${trend >= 0 ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}
+              animate={trend >= 0 ? { 
+                x: [0, -3, 0],
+              } : {
+                x: [0, 3, 0],
+              }}
+              transition={{
+                duration: 1,
+                repeat: Infinity,
+                repeatDelay: 2,
+              }}
+            >
+              {trend >= 0 ? "↗" : "↘"} {trend >= 0 ? "+" : ""}{trend}%
+            </motion.span>
+            <span className="ml-2 rtl:mr-2 rtl:ml-0 text-gray-500 dark:text-gray-400">{t('dashboard.vsLastMonth')}</span>
+          </motion.div>
+        )}
       </div>
-      {trend && (
-        <div className="mt-4 flex items-center text-xs md:text-sm relative z-10">
-          <span className={`font-bold ${trend >= 0 ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}>
-            {trend >= 0 ? "↗" : "↘"} {trend >= 0 ? "+" : ""}{trend}%
-          </span>
-          <span className="ml-2 rtl:mr-2 rtl:ml-0 text-gray-500 dark:text-gray-400">{t('dashboard.vsLastMonth')}</span>
-        </div>
-      )}
     </motion.div>
   );
 };
@@ -211,10 +321,52 @@ const DashboardPage = () => {
   }
 
   return (
-    <div className="space-y-6 min-h-[500px] relative">
-      {/* Animated Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-orange-50/50 via-purple-50/50 to-pink-50/50 dark:from-gray-900/50 dark:via-purple-900/50 dark:to-gray-900/50 -z-10"></div>
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(255,140,0,0.05),transparent_50%)] -z-10"></div>
+    <div className="space-y-6 min-h-[500px] relative overflow-hidden">
+      {/* Advanced Animated Background with Particles */}
+      <div className="absolute inset-0 -z-10 overflow-hidden">
+        <motion.div 
+          className="absolute inset-0 bg-gradient-to-br from-orange-50/50 via-purple-50/50 to-pink-50/50 dark:from-gray-900/50 dark:via-purple-900/50 dark:to-gray-900/50"
+          animate={{
+            background: [
+              'linear-gradient(135deg, rgba(255, 140, 0, 0.05) 0%, rgba(168, 85, 247, 0.05) 50%, rgba(236, 72, 153, 0.05) 100%)',
+              'linear-gradient(135deg, rgba(236, 72, 153, 0.05) 0%, rgba(255, 140, 0, 0.05) 50%, rgba(168, 85, 247, 0.05) 100%)',
+              'linear-gradient(135deg, rgba(255, 140, 0, 0.05) 0%, rgba(168, 85, 247, 0.05) 50%, rgba(236, 72, 153, 0.05) 100%)',
+            ],
+          }}
+          transition={{
+            duration: 10,
+            repeat: Infinity,
+            ease: 'linear',
+          }}
+        />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(255,140,0,0.08),transparent_50%)]"></div>
+        
+        {/* Floating Particles */}
+        {[...Array(15)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-2 h-2 rounded-full"
+            style={{
+              background: 'radial-gradient(circle, rgba(255, 140, 0, 0.4), transparent)',
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              boxShadow: '0 0 20px rgba(255, 140, 0, 0.3)',
+            }}
+            animate={{
+              y: [0, -100, 0],
+              x: [0, Math.random() * 50 - 25, 0],
+              opacity: [0.2, 0.8, 0.2],
+              scale: [1, 1.5, 1],
+            }}
+            transition={{
+              duration: 8 + Math.random() * 4,
+              repeat: Infinity,
+              delay: Math.random() * 2,
+              ease: 'easeInOut',
+            }}
+          />
+        ))}
+      </div>
       
       <Helmet><title>{t('common.dashboard')} - {t('common.systemName')}</title></Helmet>
 
@@ -233,21 +385,31 @@ const DashboardPage = () => {
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-3">
-          <select
+        <motion.div 
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.15 }}
+          className="flex items-center gap-3"
+        >
+          <motion.select
+            whileHover={{ scale: 1.05 }}
+            whileFocus={{ scale: 1.05 }}
             value={filterPeriod}
             onChange={(e) => setFilterPeriod(e.target.value)}
-            className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-gray-100 text-sm"
+            className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-xl dark:bg-gray-700 dark:text-gray-100 text-sm bg-white/90 backdrop-blur-sm shadow-lg focus:ring-2 focus:ring-orange-500/50 transition-all"
           >
             <option value="day">اليوم</option>
             <option value="week">هذا الأسبوع</option>
             <option value="month">هذا الشهر</option>
             <option value="all">الكل</option>
-          </select>
-          <div className="text-sm text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 px-4 py-2 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700">
+          </motion.select>
+          <motion.div 
+            whileHover={{ scale: 1.05 }}
+            className="text-sm text-gray-500 dark:text-gray-400 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm px-4 py-2 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700"
+          >
             {formatDateAR(new Date(), { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </motion.div>
 
       <motion.div 
@@ -257,7 +419,7 @@ const DashboardPage = () => {
         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 relative z-10"
       >
         {/* إجمالي الدخل لكل عملة */}
-        {Object.entries(stats.incomeByCurrency).map(([currency, amount]) => {
+        {Object.entries(stats.incomeByCurrency).map(([currency, amount], idx) => {
           if (amount === 0) return null;
           const currencyInfo = CURRENCIES[currency] || { symbol: currency, code: currency };
           return (
@@ -268,13 +430,15 @@ const DashboardPage = () => {
               value={`${currencyInfo.symbol}${amount.toLocaleString()}`} 
               icon={TrendingUp} 
               trend={12} 
-              color="bg-green-500" 
+              color="bg-green-500"
+              index={idx}
             />
           );
         })}
         
         {/* إجمالي المصروفات لكل عملة */}
-        {Object.entries(stats.expensesByCurrency).map(([currency, amount]) => {
+        {Object.entries(stats.expensesByCurrency).map(([currency, amount], idx) => {
+          const incomeIdx = Object.keys(stats.incomeByCurrency).length;
           if (amount === 0) return null;
           const currencyInfo = CURRENCIES[currency] || { symbol: currency, code: currency };
           return (
@@ -285,13 +449,16 @@ const DashboardPage = () => {
               value={`${currencyInfo.symbol}${amount.toLocaleString()}`} 
               icon={TrendingDown} 
               trend={-5} 
-              color="bg-red-500" 
+              color="bg-red-500"
+              index={incomeIdx + idx}
             />
           );
         })}
         
         {/* صافي الربح لكل عملة */}
-        {Object.entries(stats.incomeByCurrency).map(([currency, income]) => {
+        {Object.entries(stats.incomeByCurrency).map(([currency, income], idx) => {
+          const expensesCount = Object.keys(stats.expensesByCurrency).length;
+          const incomeCount = Object.keys(stats.incomeByCurrency).length;
           const expenses = stats.expensesByCurrency[currency] || 0;
           const net = income - expenses;
           if (income === 0 && expenses === 0) return null;
@@ -304,13 +471,28 @@ const DashboardPage = () => {
               value={`${currencyInfo.symbol}${net.toLocaleString()}`} 
               icon={Wallet} 
               trend={net >= 0 ? 8 : -8} 
-              color="bg-blue-500" 
+              color="bg-blue-500"
+              index={incomeCount + expensesCount + idx}
             />
           );
         })}
         
         {/* الموظفون النشطون - بطاقة واحدة */}
-        <KPICard t={t} title={t('dashboard.activeEmployees')} value={stats.employees} icon={Users} color="bg-orange-500" />
+        {(() => {
+          const totalCards = Object.keys(stats.incomeByCurrency).length + 
+                           Object.keys(stats.expensesByCurrency).length + 
+                           Object.keys(stats.incomeByCurrency).length;
+          return (
+            <KPICard 
+              t={t} 
+              title={t('dashboard.activeEmployees')} 
+              value={stats.employees} 
+              icon={Users} 
+              color="bg-orange-500"
+              index={totalCards}
+            />
+          );
+        })()}
         
         {/* الربح/الخسارة اليومية */}
         {stats.todayProfitLoss && (
@@ -332,10 +514,81 @@ const DashboardPage = () => {
         )}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="lg:col-span-2 bg-white dark:bg-gray-800 p-4 md:p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
-          <h3 className="font-bold text-gray-900 dark:text-white mb-4">{t('dashboard.financialOverview')}</h3>
-          <div className="h-64"><Line options={{ maintainAspectRatio: false, responsive: true }} data={chartData} /></div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 relative z-10">
+        <motion.div 
+          initial={{ opacity: 0, x: -30, rotateY: -5 }}
+          animate={{ opacity: 1, x: 0, rotateY: 0 }}
+          transition={{ duration: 0.6, delay: 0.2, type: "spring" }}
+          className="lg:col-span-2 relative overflow-hidden"
+          style={{ transformStyle: 'preserve-3d' }}
+        >
+          {/* Glassmorphism Container */}
+          <div className="relative bg-gradient-to-br from-white/95 to-white/90 dark:from-gray-800/95 dark:to-gray-800/90 backdrop-blur-xl p-6 md:p-8 rounded-2xl shadow-2xl border border-gray-200/50 dark:border-gray-700/50"
+            style={{
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.1) inset, 0 0 60px rgba(255, 140, 0, 0.1)',
+            }}
+          >
+            {/* Animated Background Glow */}
+            <motion.div
+              className="absolute inset-0 bg-gradient-to-r from-orange-500/5 via-pink-500/5 to-purple-500/5 rounded-2xl"
+              animate={{
+                opacity: [0.5, 1, 0.5],
+              }}
+              transition={{
+                duration: 3,
+                repeat: Infinity,
+                ease: 'easeInOut',
+              }}
+            />
+
+            <motion.h3 
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="text-2xl font-black text-gray-900 dark:text-white mb-6 bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent relative z-10"
+            >
+              {t('dashboard.financialOverview')}
+            </motion.h3>
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.4, duration: 0.5 }}
+              className="h-80 relative z-10"
+            >
+              <Line 
+                options={{ 
+                  maintainAspectRatio: false, 
+                  responsive: true,
+                  animation: {
+                    duration: 1500,
+                    easing: 'easeOutQuart',
+                  },
+                  plugins: {
+                    legend: {
+                      labels: {
+                        font: { size: 14, weight: 'bold' },
+                        color: '#1f2937',
+                      },
+                    },
+                  },
+                  scales: {
+                    y: {
+                      beginAtZero: true,
+                      grid: {
+                        color: 'rgba(0, 0, 0, 0.05)',
+                      },
+                    },
+                    x: {
+                      grid: {
+                        color: 'rgba(0, 0, 0, 0.05)',
+                      },
+                    },
+                  },
+                }} 
+                data={chartData} 
+              />
+            </motion.div>
+          </div>
         </motion.div>
 
         <motion.div 
@@ -344,35 +597,105 @@ const DashboardPage = () => {
           transition={{ duration: 0.5, delay: 0.3 }}
           className="space-y-6"
         >
-          <div className="bg-gradient-to-br from-white/95 to-white/90 dark:from-gray-800/95 dark:to-gray-800/90 backdrop-blur-xl p-6 md:p-8 rounded-2xl shadow-xl border border-gray-200/50 dark:border-gray-700/50 hover:shadow-2xl transition-all duration-300">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-black text-gray-900 dark:text-white bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
-                {t('dashboard.lowStock')}
-              </h3>
-              <span className="px-4 py-2 bg-gradient-to-r from-red-500 to-pink-500 text-white text-sm rounded-full font-bold shadow-lg">
-                {stats.lowStock} {t('dashboard.items')}
-              </span>
-            </div>
-            {stats.lowStock > 0 ? (
-              <div className="space-y-3">
-                <motion.div 
-                  initial={{ scale: 0.95 }}
-                  animate={{ scale: 1 }}
-                  className="flex items-center gap-4 text-sm p-4 bg-gradient-to-r from-red-50 to-pink-50 dark:from-red-900/30 dark:to-pink-900/30 rounded-xl border-2 border-red-200 dark:border-red-900/50 shadow-lg"
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.3 }}
+            className="relative overflow-hidden"
+          >
+            <div className="relative bg-gradient-to-br from-white/95 to-white/90 dark:from-gray-800/95 dark:to-gray-800/90 backdrop-blur-xl p-6 md:p-8 rounded-2xl shadow-2xl border border-gray-200/50 dark:border-gray-700/50 hover:shadow-2xl transition-all duration-300"
+              style={{
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.1) inset',
+              }}
+            >
+              {/* Animated Glow */}
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-r from-red-500/5 via-pink-500/5 to-orange-500/5 rounded-2xl"
+                animate={{
+                  opacity: [0.5, 1, 0.5],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: 'easeInOut',
+                }}
+              />
+
+              <div className="flex items-center justify-between mb-6 relative z-10">
+                <motion.h3 
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.4 }}
+                  className="text-xl font-black text-gray-900 dark:text-white bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent"
                 >
-                  <AlertTriangle className="h-6 w-6 text-red-500 animate-pulse" />
-                  <span className="font-semibold text-gray-800 dark:text-gray-200">{t('dashboard.actionNeeded')}</span>
+                  {t('dashboard.lowStock')}
+                </motion.h3>
+                <motion.span 
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 0.5, type: "spring" }}
+                  className="px-4 py-2 bg-gradient-to-r from-red-500 via-pink-500 to-red-500 text-white text-sm rounded-full font-bold shadow-lg"
+                  animate={{
+                    boxShadow: [
+                      '0 4px 15px rgba(239, 68, 68, 0.3)',
+                      '0 4px 25px rgba(236, 72, 153, 0.5)',
+                      '0 4px 15px rgba(239, 68, 68, 0.3)',
+                    ],
+                  }}
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                    ease: 'easeInOut',
+                  }}
+                >
+                  {stats.lowStock} {t('dashboard.items')}
+                </motion.span>
+              </div>
+              {stats.lowStock > 0 ? (
+                <motion.div 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.6 }}
+                  className="space-y-3 relative z-10"
+                >
+                  <motion.div 
+                    whileHover={{ scale: 1.02, x: 5 }}
+                    className="flex items-center gap-4 text-sm p-4 bg-gradient-to-r from-red-50 to-pink-50 dark:from-red-900/30 dark:to-pink-900/30 rounded-xl border-2 border-red-200 dark:border-red-900/50 shadow-lg"
+                  >
+                    <motion.div
+                      animate={{ rotate: [0, 10, -10, 10, 0] }}
+                      transition={{ duration: 2, repeat: Infinity, repeatDelay: 1 }}
+                    >
+                      <AlertTriangle className="h-6 w-6 text-red-500" />
+                    </motion.div>
+                    <span className="font-semibold text-gray-800 dark:text-gray-200">{t('dashboard.actionNeeded')}</span>
+                  </motion.div>
                 </motion.div>
-              </div>
-            ) : (
-              <div className="text-center py-8">
-                <div className="inline-flex items-center gap-2 text-green-600 dark:text-green-400">
-                  <CheckCircle className="h-6 w-6" />
-                  <span className="font-semibold">{t('dashboard.allStockHealthy')}</span>
-                </div>
-              </div>
-            )}
-          </div>
+              ) : (
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.6, type: "spring" }}
+                  className="text-center py-8 relative z-10"
+                >
+                  <motion.div 
+                    className="inline-flex items-center gap-2 text-green-600 dark:text-green-400"
+                    animate={{
+                      scale: [1, 1.05, 1],
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: 'easeInOut',
+                    }}
+                  >
+                    <CheckCircle className="h-6 w-6" />
+                    <span className="font-semibold">{t('dashboard.allStockHealthy')}</span>
+                  </motion.div>
+                </motion.div>
+              )}
+            </div>
+          </motion.div>
         </motion.div>
       </div>
     </div>
