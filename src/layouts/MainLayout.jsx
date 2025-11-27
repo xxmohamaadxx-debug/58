@@ -161,7 +161,7 @@ const MainLayout = ({ children }) => {
             {pendingSyncCount > 0 && ` (${pendingSyncCount} عنصر في انتظار الرفع)`}
           </div>
         )}
-        <main className="flex-1 overflow-y-auto p-3 sm:p-4 md:p-6 scroll-smooth pb-20 lg:pb-6">
+        <main className="flex-1 overflow-y-auto p-3 sm:p-4 md:p-6 scroll-smooth pb-20 lg:pb-6 custom-scrollbar">
           <div className="max-w-7xl mx-auto w-full">
             {children}
           </div>

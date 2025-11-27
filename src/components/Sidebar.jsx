@@ -226,7 +226,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
           </motion.button>
         </motion.div>
 
-      <nav className="flex-1 px-2 sm:px-4 overflow-y-auto h-[calc(100vh-80px)] pb-4">
+      <nav className="flex-1 px-2 sm:px-4 overflow-y-auto h-[calc(100vh-80px)] pb-4 custom-scrollbar">
         {/* Admin Panel - فقط للمشرفين */}
         {user?.isSuperAdmin && (
           <>
