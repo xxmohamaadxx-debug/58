@@ -40,26 +40,107 @@ const LoginPage = () => {
 
 
   return (
-    <>
+    <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+      {/* Animated Background */}
+      <div className="absolute inset-0 overflow-hidden">
+        <motion.div
+          className="absolute -top-40 -right-40 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20"
+          animate={{
+            x: [0, 50, 0],
+            y: [0, 50, 0],
+          }}
+          transition={{
+            duration: 10,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
+        />
+        <motion.div
+          className="absolute -bottom-40 -left-40 w-96 h-96 bg-orange-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20"
+          animate={{
+            x: [0, -50, 0],
+            y: [0, -50, 0],
+          }}
+          transition={{
+            duration: 12,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
+        />
+        <motion.div
+          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20"
+          animate={{
+            scale: [1, 1.2, 1],
+            rotate: [0, 90, 0],
+          }}
+          transition={{
+            duration: 15,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
+        />
+      </div>
+
       <Helmet>
         <title>{t('auth.loginTitle')} - {t('common.systemName')}</title>
       </Helmet>
-      <div className="w-full space-y-6">
-        <div className="text-center">
-          <motion.div
-            initial={{ scale: 0.5, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className="flex justify-center mb-6"
-          >
-            <Logo size="xl" showText={true} />
-          </motion.div>
-          <h2 className="mt-2 text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
-            {t('auth.welcomeBack')}
-          </h2>
-          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-            {t('auth.signInToAccess')}
-          </p>
-        </div>
+      
+      <div className="relative z-10 w-full space-y-6 min-h-screen flex items-center justify-center p-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="w-full max-w-md"
+        >
+          {/* Glassmorphism Card */}
+          <div className="relative backdrop-blur-xl bg-white/10 dark:bg-gray-900/30 rounded-3xl shadow-2xl border border-white/20 p-8 md:p-10 overflow-hidden">
+            {/* Animated Border Glow */}
+            <motion.div
+              className="absolute inset-0 rounded-3xl"
+              style={{
+                background: 'linear-gradient(135deg, rgba(255, 140, 0, 0.3), rgba(236, 72, 153, 0.3), rgba(168, 85, 247, 0.3))',
+                padding: '2px',
+                WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+                WebkitMaskComposite: 'xor',
+                maskComposite: 'exclude',
+              }}
+              animate={{
+                rotate: [0, 360],
+              }}
+              transition={{
+                duration: 20,
+                repeat: Infinity,
+                ease: 'linear',
+              }}
+            />
+            
+            <div className="relative z-10">
+              <div className="text-center mb-8">
+                <motion.div
+                  initial={{ scale: 0, rotate: -180 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  transition={{ type: "spring", stiffness: 200, damping: 15 }}
+                  className="flex justify-center mb-6"
+                >
+                  <Logo size="xl" showText={true} />
+                </motion.div>
+                <motion.h2 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 }}
+                  className="mt-2 text-4xl font-black tracking-tight text-white mb-2"
+                >
+                  {t('auth.welcomeBack')}
+                </motion.h2>
+                <motion.p 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.3 }}
+                  className="mt-2 text-sm text-purple-200 font-medium"
+                >
+                  {t('auth.signInToAccess')}
+                </motion.p>
+              </div>
 
         <AnimatePresence>
           {error && (
@@ -88,54 +169,85 @@ const LoginPage = () => {
           )}
         </AnimatePresence>
 
-        <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
-          <div className="space-y-4">
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('auth.email')}</label>
-              <input
-                id="email"
-                type="email"
-                required
-                className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all outline-none"
-                placeholder={t('auth.email')}
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('auth.password')}</label>
-              <input
-                id="password"
-                type="password"
-                required
-                className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all outline-none"
-                placeholder={t('auth.password')}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
-          </div>
+              <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+                <div className="space-y-5">
+                  <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.4 }}
+                  >
+                    <label htmlFor="email" className="block text-sm font-bold text-white mb-2">{t('auth.email')}</label>
+                    <motion.input
+                      id="email"
+                      type="email"
+                      required
+                      whileFocus={{ scale: 1.02 }}
+                      className="w-full px-5 py-3 rounded-xl border-2 border-white/20 bg-white/10 backdrop-blur-sm text-white placeholder-purple-300 focus:border-orange-400 focus:bg-white/20 focus:ring-4 focus:ring-orange-500/30 transition-all outline-none font-medium"
+                      placeholder={t('auth.email')}
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
+                  </motion.div>
+                  <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.5 }}
+                  >
+                    <label htmlFor="password" className="block text-sm font-bold text-white mb-2">{t('auth.password')}</label>
+                    <motion.input
+                      id="password"
+                      type="password"
+                      required
+                      whileFocus={{ scale: 1.02 }}
+                      className="w-full px-5 py-3 rounded-xl border-2 border-white/20 bg-white/10 backdrop-blur-sm text-white placeholder-purple-300 focus:border-orange-400 focus:bg-white/20 focus:ring-4 focus:ring-orange-500/30 transition-all outline-none font-medium"
+                      placeholder={t('auth.password')}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                    />
+                  </motion.div>
+                </div>
 
-          <div className="space-y-3">
-            <Button
-              type="submit"
-              className="w-full bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 text-white font-semibold py-2.5 rounded-lg shadow-md transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98]"
-              disabled={isLoading}
-            >
-              {isLoading ? <Loader2 className="h-5 w-5 animate-spin ml-2 rtl:mr-2 rtl:ml-0" /> : null}
-              {isLoading ? t('auth.signingIn') : t('auth.loginButton')}
-            </Button>
-          </div>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.6 }}
+                  className="space-y-4"
+                >
+                  <Button
+                    type="submit"
+                    variant="neon"
+                    size="lg"
+                    className="w-full text-lg font-bold"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="h-5 w-5 animate-spin ml-2 rtl:mr-2 rtl:ml-0" />
+                        {t('auth.signingIn')}
+                      </>
+                    ) : (
+                      <>{t('auth.loginButton')}</>
+                    )}
+                  </Button>
+                </motion.div>
 
-          <div className="text-center text-sm">
-            <span className="text-gray-500">{t('auth.noAccount')} </span>
-            <Link to="/register" className="font-semibold text-orange-600 hover:text-orange-500">
-              {t('auth.startTrial')}
-            </Link>
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.7 }}
+                  className="text-center text-sm"
+                >
+                  <span className="text-purple-200">{t('auth.noAccount')} </span>
+                  <Link to="/register" className="font-bold text-orange-300 hover:text-orange-200 transition-colors underline underline-offset-4">
+                    {t('auth.startTrial')}
+                  </Link>
+                </motion.div>
+              </form>
+            </div>
           </div>
-        </form>
+        </motion.div>
       </div>
-    </>
+    </div>
   );
 };
 

@@ -60,16 +60,32 @@ const NavItem = ({ to, icon: Icon, label, isActive, onClick, delay = 0 }) => {
             transition={{ duration: 0.3 }}
           />
 
-          {/* Icon with 3D Rotation */}
+          {/* Icon with Advanced 3D Rotation & Glow */}
           <motion.div
             className="relative z-10"
-            whileHover={{ rotateY: 15, rotateX: 5 }}
+            whileHover={{ rotateY: 15, rotateX: 5, scale: 1.1 }}
             transition={{ type: "spring", stiffness: 300 }}
             style={{ transformStyle: 'preserve-3d' }}
           >
-            <Icon className={`h-5 w-5 ltr:mr-3 rtl:ml-3 transition-colors duration-300 ${
-              isActive ? 'text-white' : 'text-gray-400 group-hover:text-orange-400'
-            }`} />
+            {isActive && (
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-r from-orange-500 to-pink-500 rounded-full blur-md opacity-50"
+                animate={{
+                  scale: [1, 1.3, 1],
+                  opacity: [0.3, 0.6, 0.3],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: 'easeInOut',
+                }}
+              />
+            )}
+            <Icon className={`h-5 w-5 ltr:mr-3 rtl:ml-3 transition-all duration-300 relative z-10 ${
+              isActive 
+                ? 'text-white drop-shadow-lg' 
+                : 'text-gray-400 group-hover:text-orange-400'
+            } ${!isActive ? 'group-hover:scale-110' : ''}`} />
           </motion.div>
 
           {/* Label */}
