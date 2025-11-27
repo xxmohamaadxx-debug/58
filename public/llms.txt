@@ -1,6 +1,5 @@
 ## Pages
 - [-](/adminpanel): No description available
-- [-](/auditlog): No description available
 - [-](/dashboard): No description available
 - [-](/inventory): No description available
 - [-](/invoicesout): No description available
@@ -24,6 +23,7 @@
 - [النسخ الاحتياطي](/backup): No description available
 - [أنواع المتاجر -](/storetypes): No description available
 - [بنود الكميات (BOQ) -](/contractorprojectitems): No description available
+- [سجل التغييرات -](/auditlog): No description available
 - [متجر المحروقات -](/fuelstation): No description available
 - [مشاريع المقاولين -](/contractorprojects): No description available
 - [Untitled Page](/employees): No description available

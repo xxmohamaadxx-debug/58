@@ -4,7 +4,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { neonService } from '@/lib/neonService';
 import { Button } from '@/components/ui/button';
-import { Loader2, Plus, Store, Edit, Trash2, MessageCircle, Download, FileDown } from 'lucide-react';
+import { Loader2, Plus, Store, Edit, Trash2, MessageCircle, Download, FileDown, Package, Users, ShoppingCart, FolderPlus } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from '@/components/ui/use-toast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { SUBSCRIPTION_PLANS, CONTACT_INFO, ROLES } from '@/lib/constants';
@@ -20,6 +21,7 @@ const AdminPanel = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [subscriptionDialogOpen, setSubscriptionDialogOpen] = useState(false);
+  const [contentDialogOpen, setContentDialogOpen] = useState(false);
   const [selectedStore, setSelectedStore] = useState(null);
   
   // New Store Form
@@ -48,6 +50,13 @@ const AdminPanel = () => {
     plan: 'monthly',
     customDays: '',
     customExpiryDate: ''
+  });
+
+  // Store Content Form
+  const [contentFormData, setContentFormData] = useState({
+    type: 'products', // products, categories, customers, employees, inventory
+    content: '',
+    count: 1
   });
 
   useEffect(() => {
@@ -363,6 +372,123 @@ const AdminPanel = () => {
         description: error.message || 'حدث خطأ أثناء حذف المتجر',
         variant: 'destructive' 
       });
+    }
+  };
+
+  const handleAddStoreContent = async () => {
+    if (!selectedStore || !contentFormData.content) {
+      toast({
+        title: 'خطأ',
+        description: 'يرجى ملء جميع الحقول المطلوبة',
+        variant: 'destructive'
+      });
+      return;
+    }
+
+    setLoading(true);
+    try {
+      let parsedContent = [];
+      
+      // محاولة تحليل JSON
+      try {
+        parsedContent = JSON.parse(contentFormData.content);
+        if (!Array.isArray(parsedContent)) {
+          parsedContent = [parsedContent];
+        }
+      } catch (e) {
+        // إذا لم يكن JSON، تحويله إلى قائمة
+        const lines = contentFormData.content.split('\n').filter(line => line.trim());
+        parsedContent = lines.slice(0, contentFormData.count).map((line, index) => {
+          const parts = line.trim().split(/[,\t]/).map(p => p.trim());
+          return {
+            name: parts[0] || `عنصر ${index + 1}`,
+            ...(parts[1] && { price: parseFloat(parts[1]) || 0 }),
+            ...(parts[2] && { category: parts[2] }),
+            ...(parts[3] && { description: parts[3] })
+          };
+        });
+      }
+
+      // تقييد العدد
+      parsedContent = parsedContent.slice(0, contentFormData.count);
+
+      // إضافة المحتوى حسب النوع
+      let addedCount = 0;
+      for (const item of parsedContent) {
+        try {
+          switch (contentFormData.type) {
+            case 'products':
+              // إضافة منتج (يتطلب جدول products)
+              // await neonService.createProduct({ ...item, tenant_id: selectedStore.id });
+              break;
+            case 'categories':
+              // إضافة فئة
+              // await neonService.createCategory({ ...item, tenant_id: selectedStore.id });
+              break;
+            case 'customers':
+              await neonService.createPartner({
+                name: item.name || `عميل ${addedCount + 1}`,
+                type: 'Customer',
+                phone: item.phone || '',
+                email: item.email || '',
+                address: item.address || '',
+                ...item
+              }, selectedStore.id);
+              addedCount++;
+              break;
+            case 'employees':
+              await neonService.createEmployee({
+                name: item.name || `موظف ${addedCount + 1}`,
+                position: item.position || 'موظف',
+                phone: item.phone || '',
+                email: item.email || '',
+                salary: item.salary || 0,
+                status: 'Active',
+                ...item
+              }, selectedStore.id);
+              addedCount++;
+              break;
+            case 'inventory':
+              await neonService.createInventory({
+                name: item.name || `صنف ${addedCount + 1}`,
+                quantity: item.quantity || 0,
+                unit_price: item.price || item.unit_price || 0,
+                category: item.category || '',
+                ...item
+              }, selectedStore.id);
+              addedCount++;
+              break;
+          }
+        } catch (err) {
+          console.error(`Error adding ${contentFormData.type} item:`, err);
+        }
+      }
+
+      // تسجيل في سجل التغييرات
+      await neonService.log(user.tenant_id || selectedStore.id, user.id, 'ADD_STORE_CONTENT', {
+        storeId: selectedStore.id,
+        storeName: selectedStore.name,
+        contentType: contentFormData.type,
+        itemsCount: addedCount
+      });
+
+      toast({
+        title: 'تم بنجاح',
+        description: `تم إضافة ${addedCount} عنصر من نوع ${contentFormData.type} للمتجر "${selectedStore.name}"`,
+        variant: 'default'
+      });
+
+      setContentDialogOpen(false);
+      setContentFormData({ type: 'products', content: '', count: 1 });
+    } catch (error) {
+      console.error('Add store content error:', error);
+      toast({
+        title: 'خطأ',
+        description: error.message || 'حدث خطأ أثناء إضافة المحتوى',
+        variant: 'destructive'
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
