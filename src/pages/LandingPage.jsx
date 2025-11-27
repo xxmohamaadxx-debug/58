@@ -33,12 +33,20 @@ const LandingPage = () => {
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
 
   const languages = [
-    { code: 'ar', name: 'العربية', flag: '🇸🇦' },
-    { code: 'en', name: 'English', flag: '🇬🇧' },
-    { code: 'tr', name: 'Türkçe', flag: '🇹🇷' }
+    { code: 'ar', name: 'العربية', flag: '🇸🇦', dir: 'rtl' },
+    { code: 'en', name: 'English', flag: '🇬🇧', dir: 'ltr' },
+    { code: 'tr', name: 'Türkçe', flag: '🇹🇷', dir: 'ltr' }
   ];
 
   const currentLanguage = languages.find(lang => lang.code === locale) || languages[0];
+
+  // Update document direction when locale changes
+  useEffect(() => {
+    if (currentLanguage) {
+      document.documentElement.lang = currentLanguage.code;
+      document.documentElement.dir = currentLanguage.dir;
+    }
+  }, [locale, currentLanguage]);
 
   // Close language menu when clicking outside
   useEffect(() => {
@@ -264,8 +272,19 @@ const LandingPage = () => {
                           key={lang.code}
                           whileHover={{ x: 5, backgroundColor: 'rgba(255, 140, 0, 0.2)' }}
                           whileTap={{ scale: 0.98 }}
-                          onClick={() => {
-                            setLocale(lang.code);
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            if (setLocale && typeof setLocale === 'function') {
+                              setLocale(lang.code);
+                              // Force update HTML dir attribute
+                              document.documentElement.lang = lang.code;
+                              if (lang.code === 'ar') {
+                                document.documentElement.dir = 'rtl';
+                              } else {
+                                document.documentElement.dir = 'ltr';
+                              }
+                            }
                             setIsLangMenuOpen(false);
                           }}
                           className={`w-full flex items-center gap-3 px-4 py-3 text-left rtl:text-right transition-all duration-200 ${
