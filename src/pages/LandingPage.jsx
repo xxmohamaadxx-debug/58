@@ -353,11 +353,7 @@ const LandingPage = () => {
             transition={{ duration: 0.8 }}
           >
             <h1 className="text-5xl md:text-6xl lg:text-8xl font-black text-white mb-6 drop-shadow-2xl leading-tight">
-              نظام إدارة محاسبي
-              <br />
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-pink-400 to-purple-400 animate-gradient mt-4">
-                متكامل ومتقدم
-              </span>
+              {t('landing.systemName')}
             </h1>
           </motion.div>
           <motion.div 
@@ -366,7 +362,7 @@ const LandingPage = () => {
             transition={{ duration: 0.8, delay: 0.2 }}
           >
             <p className="text-2xl md:text-4xl text-white mb-6 max-w-4xl mx-auto font-bold drop-shadow-lg">
-              قوة تحويل متجرك إلى إمبراطورية رقمية 🔥
+              {t('landing.heroTitle')}
             </p>
           </motion.div>
           <motion.div 
@@ -375,10 +371,10 @@ const LandingPage = () => {
             transition={{ duration: 0.8, delay: 0.3 }}
           >
             <p className="text-lg md:text-xl text-purple-100 mb-10 max-w-3xl mx-auto leading-relaxed">
-              إدارة متكاملة لجميع أنواع المتاجر مع نسخ احتياطية تلقائية وحماية عالية وتقارير شاملة
+              {t('landing.heroSubtitle')}
               <br />
               <span className="text-orange-300 font-bold text-xl mt-4 inline-block bg-gradient-to-r from-orange-400 to-pink-400 bg-clip-text text-transparent">
-                ✨ ابدأ مجاناً لمدة 15 يوم - بدون بطاقة ائتمان ✨
+                {t('landing.ctaFreeTrial')}
               </span>
             </p>
           </motion.div>
@@ -566,7 +562,7 @@ const LandingPage = () => {
                     transition={{ delay: 0.3 }}
                     className="absolute -top-5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-orange-500 via-pink-500 to-purple-500 text-white px-6 py-2 rounded-full text-sm font-bold shadow-lg"
                   >
-                    ⭐ الأكثر شعبية
+                    ⭐ {t('subscription.bestValue') || 'الأكثر شعبية'}
                   </motion.div>
                 )}
                 <h3 className="text-3xl font-black text-white mb-3 group-hover:text-orange-300 transition-colors">
@@ -659,11 +655,11 @@ const LandingPage = () => {
                 <span className="text-white font-bold">{t('landing.systemNameShort')}</span>
               </div>
               <p className="text-sm text-purple-200 leading-relaxed">
-                نظام إدارة محاسبي متكامل ومتقدم لجميع أنواع المتاجر
+                {t('landing.heroSubtitle')}
               </p>
             </div>
             <div>
-              <h4 className="text-white font-bold mb-6 text-lg">اتصل بنا</h4>
+              <h4 className="text-white font-bold mb-6 text-lg">{t('common.contact') || 'اتصل بنا'}</h4>
               <div className="space-y-4">
                 {appSettings.support_phone && (
                   <div className="flex items-center gap-3 glass px-4 py-3 rounded-xl border border-white/10 hover:border-orange-400/50 transition-all">
@@ -680,7 +676,7 @@ const LandingPage = () => {
               </div>
             </div>
             <div>
-              <h4 className="text-white font-bold mb-6 text-lg">روابط سريعة</h4>
+              <h4 className="text-white font-bold mb-6 text-lg">{t('common.quickLinks') || 'روابط سريعة'}</h4>
               <div className="space-y-3">
                 <Link to="/login" className="block glass px-4 py-3 rounded-xl border border-white/10 hover:border-orange-400/50 hover:bg-white/5 text-purple-200 hover:text-white transition-all">
                   {t('landing.loginButton')}

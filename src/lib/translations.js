@@ -57,7 +57,9 @@ export const translations = {
       language: "Language",
       items: "Items",
       unit: "Unit",
-      unitPrice: "Unit Price"
+      unitPrice: "Unit Price",
+      contact: "Contact Us",
+      quickLinks: "Quick Links"
     },
     dashboard: {
       welcome: "Welcome back,",
@@ -248,6 +250,8 @@ export const translations = {
       items: "المنتجات",
       unit: "الوحدة",
       unitPrice: "سعر الوحدة",
+      contact: "اتصل بنا",
+      quickLinks: "روابط سريعة",
       manual: "يدوي",
       fromInventory: "من المستودع",
       addItem: "إضافة منتج",
@@ -615,7 +619,9 @@ export const translations = {
       language: "Dil",
       items: "Ürünler",
       unit: "Birim",
-      unitPrice: "Birim Fiyat"
+      unitPrice: "Birim Fiyat",
+      contact: "İletişim",
+      quickLinks: "Hızlı Bağlantılar"
     },
     dashboard: {
       welcome: "Hoşgeldiniz,",

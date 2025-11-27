@@ -203,6 +203,11 @@ const TopNav = ({ onMenuClick, isOffline: propIsOffline = false, pendingSyncCoun
                       e.stopPropagation();
                       if (setLocale && typeof setLocale === 'function') {
                         setLocale(lang.code);
+                        // Force update HTML dir and lang attributes
+                        document.documentElement.lang = lang.code;
+                        document.documentElement.dir = lang.code === 'ar' ? 'rtl' : 'ltr';
+                        // Force page reload to apply translations
+                        window.location.reload();
                       }
                       setIsLangMenuOpen(false);
                     }}
