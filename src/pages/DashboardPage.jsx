@@ -327,9 +327,12 @@ const DashboardPage = () => {
   }
 
   return (
-    <div className="space-y-6 min-h-[500px] relative overflow-hidden">
-      {/* Advanced Animated Background with Particles */}
-      <div className="absolute inset-0 -z-10 overflow-hidden">
+    <div className="space-y-6 min-h-[500px] relative overflow-hidden rounded-2xl p-4 md:p-6" style={{
+      background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.98) 0%, rgba(30, 27, 75, 0.98) 50%, rgba(15, 23, 42, 0.98) 100%)',
+      backdropFilter: 'blur(20px) saturate(180%)',
+    }}>
+      {/* Ultra Advanced 3D Animated Background with Dynamic Particles */}
+      <div className="absolute inset-0 -z-10 overflow-hidden rounded-2xl">
         <motion.div 
           className="absolute inset-0 bg-gradient-to-br from-orange-50/50 via-purple-50/50 to-pink-50/50 dark:from-gray-900/50 dark:via-purple-900/50 dark:to-gray-900/50"
           animate={{
@@ -376,46 +379,96 @@ const DashboardPage = () => {
       
       <Helmet><title>{t('common.dashboard')} - {t('common.systemName')}</title></Helmet>
 
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative z-10"
+      {/* Enhanced 3D Header with Advanced Animations */}
+      <motion.div
+        initial={{ opacity: 0, y: -30, rotateX: -10 }}
+        animate={{ opacity: 1, y: 0, rotateX: 0 }}
+        transition={{ duration: 0.8, type: "spring", stiffness: 100 }}
+        className="relative z-10 mb-8"
+        style={{ transformStyle: 'preserve-3d', perspective: '1000px' }}
       >
-        <div className="flex items-center gap-3">
-          <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
-              {t('dashboard.welcome')} {user?.name || 'المستخدم'} 👋
-            </h1>
-            <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
-              {t('dashboard.subtitle') || 'إليك ما يحدث في متجرك اليوم'}
-            </p>
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div className="flex items-center gap-4">
+            <motion.div
+              className="relative"
+              whileHover={{ scale: 1.1, rotateY: 15, rotateX: 5 }}
+              transition={{ type: "spring", stiffness: 300 }}
+              style={{ transformStyle: 'preserve-3d' }}
+            >
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-r from-orange-500/40 to-pink-500/40 rounded-2xl blur-2xl"
+                animate={{
+                  opacity: [0.3, 0.6, 0.3],
+                  scale: [1, 1.2, 1],
+                }}
+                transition={{
+                  duration: 3,
+                  repeat: Infinity,
+                  ease: 'easeInOut',
+                }}
+              />
+              <div className="relative bg-gradient-to-br from-white/20 to-white/10 backdrop-blur-2xl p-4 rounded-2xl border-2 border-white/30 shadow-2xl">
+                <motion.div
+                  animate={{ rotate: [0, 360] }}
+                  transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
+                >
+                  <Activity className="h-8 w-8 text-orange-300 drop-shadow-lg" />
+                </motion.div>
+              </div>
+            </motion.div>
+            <div>
+              <motion.h1
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.2 }}
+                className="text-3xl sm:text-5xl font-black text-white bg-gradient-to-r from-orange-300 via-pink-300 to-purple-300 bg-clip-text text-transparent drop-shadow-2xl mb-2"
+              >
+                {t('dashboard.welcome')} {user?.name || 'المستخدم'} 👋
+              </motion.h1>
+              <motion.p
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.3 }}
+                className="text-purple-200 text-base mt-2 font-medium flex items-center gap-2"
+              >
+                <motion.span
+                  animate={{ scale: [1, 1.2, 1] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                >
+                  ✨
+                </motion.span>
+                {t('dashboard.subtitle') || 'إليك ما يحدث في متجرك اليوم'}
+              </motion.p>
+            </div>
           </div>
-        </div>
-        <motion.div 
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.15 }}
-          className="flex items-center gap-3"
-        >
-          <motion.select
-            whileHover={{ scale: 1.05 }}
-            whileFocus={{ scale: 1.05 }}
-            value={filterPeriod}
-            onChange={(e) => setFilterPeriod(e.target.value)}
-            className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-xl dark:bg-gray-700 dark:text-gray-100 text-sm bg-white/90 backdrop-blur-sm shadow-lg focus:ring-2 focus:ring-orange-500/50 transition-all"
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.15 }}
+            className="flex items-center gap-3"
           >
-            <option value="day">اليوم</option>
-            <option value="week">هذا الأسبوع</option>
-            <option value="month">هذا الشهر</option>
-            <option value="all">الكل</option>
-          </motion.select>
-          <motion.div 
-            whileHover={{ scale: 1.05 }}
-            className="text-sm text-gray-500 dark:text-gray-400 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm px-4 py-2 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700"
-          >
-            {formatDateAR(new Date(), { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+            <motion.select
+              whileHover={{ scale: 1.05, borderColor: 'rgba(255, 140, 0, 0.5)' }}
+              whileFocus={{ scale: 1.05 }}
+              value={filterPeriod}
+              onChange={(e) => setFilterPeriod(e.target.value)}
+              className="px-4 py-2.5 border-2 border-white/30 rounded-xl text-sm bg-white/10 backdrop-blur-xl text-white font-medium shadow-xl focus:border-orange-400 focus:ring-4 focus:ring-orange-500/30 transition-all cursor-pointer"
+              style={{ transformStyle: 'preserve-3d' }}
+            >
+              <option value="day" className="bg-gray-800 text-white">اليوم</option>
+              <option value="week" className="bg-gray-800 text-white">هذا الأسبوع</option>
+              <option value="month" className="bg-gray-800 text-white">هذا الشهر</option>
+              <option value="all" className="bg-gray-800 text-white">الكل</option>
+            </motion.select>
+            <motion.div
+              whileHover={{ scale: 1.05, rotateY: 5 }}
+              className="text-sm text-purple-200 bg-white/10 backdrop-blur-xl px-4 py-2.5 rounded-xl shadow-xl border-2 border-white/20 font-medium"
+              style={{ transformStyle: 'preserve-3d' }}
+            >
+              {formatDateAR(new Date(), { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+            </motion.div>
           </motion.div>
-        </motion.div>
+        </div>
       </motion.div>
 
                   {/* Enhanced 3D KPI Cards Grid */}
@@ -522,38 +575,78 @@ const DashboardPage = () => {
         )}
       </motion.div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 relative z-10">
-        <motion.div 
-          initial={{ opacity: 0, x: -30, rotateY: -5 }}
-          animate={{ opacity: 1, x: 0, rotateY: 0 }}
-          transition={{ duration: 0.6, delay: 0.2, type: "spring" }}
+      {/* Enhanced 3D Charts Section with Ultra Advanced Effects */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 relative z-10" style={{ perspective: '2000px' }}>
+        <motion.div
+          initial={{ opacity: 0, x: -50, rotateY: -15, z: -50 }}
+          animate={{ opacity: 1, x: 0, rotateY: 0, z: 0 }}
+          transition={{ duration: 0.8, delay: 0.4, type: "spring", stiffness: 100, damping: 20 }}
+          whileHover={{ rotateY: 5, z: 20, scale: 1.02 }}
           className="lg:col-span-2 relative overflow-hidden"
           style={{ transformStyle: 'preserve-3d' }}
         >
-          {/* Glassmorphism Container */}
-          <div className="relative bg-gradient-to-br from-white/95 to-white/90 dark:from-gray-800/95 dark:to-gray-800/90 backdrop-blur-xl p-6 md:p-8 rounded-2xl shadow-2xl border border-gray-200/50 dark:border-gray-700/50"
+          {/* Ultra Advanced Glassmorphism Container with 3D Effects */}
+          <div className="relative bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-2xl p-6 md:p-8 rounded-3xl shadow-2xl border-2 border-white/20 hover:border-orange-500/50 transition-all duration-500"
             style={{
-              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.1) inset, 0 0 60px rgba(255, 140, 0, 0.1)',
+              boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1) inset, 0 0 100px rgba(255, 140, 0, 0.15), 0 0 200px rgba(236, 72, 153, 0.1)',
+              transformStyle: 'preserve-3d',
             }}
           >
-            {/* Animated Background Glow */}
+            {/* Ultra Advanced 3D Background Effects */}
             <motion.div
-              className="absolute inset-0 bg-gradient-to-r from-orange-500/5 via-pink-500/5 to-purple-500/5 rounded-2xl"
+              className="absolute inset-0 bg-gradient-to-r from-orange-500/15 via-pink-500/15 to-purple-500/15 rounded-3xl"
               animate={{
-                opacity: [0.5, 1, 0.5],
+                opacity: [0.3, 0.6, 0.3],
+                background: [
+                  'linear-gradient(135deg, rgba(255, 140, 0, 0.15) 0%, rgba(236, 72, 153, 0.15) 50%, rgba(168, 85, 247, 0.15) 100%)',
+                  'linear-gradient(135deg, rgba(236, 72, 153, 0.2) 0%, rgba(168, 85, 247, 0.2) 50%, rgba(255, 140, 0, 0.2) 100%)',
+                  'linear-gradient(135deg, rgba(255, 140, 0, 0.15) 0%, rgba(236, 72, 153, 0.15) 50%, rgba(168, 85, 247, 0.15) 100%)',
+                ],
               }}
               transition={{
-                duration: 3,
+                duration: 8,
                 repeat: Infinity,
                 ease: 'easeInOut',
               }}
             />
+            
+            {/* 3D Rotating Gradient Border */}
+            <motion.div
+              className="absolute inset-0 rounded-3xl pointer-events-none"
+              style={{
+                background: 'linear-gradient(135deg, rgba(255, 140, 0, 0.4), rgba(236, 72, 153, 0.4), rgba(168, 85, 247, 0.4))',
+                padding: '2px',
+                WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+                WebkitMaskComposite: 'xor',
+                maskComposite: 'exclude',
+              }}
+              animate={{ rotate: [0, 360] }}
+              transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
+            />
+            
+            {/* Holographic Shimmer Effect */}
+            <motion.div
+              className="absolute inset-0 rounded-3xl pointer-events-none"
+              style={{
+                background: 'linear-gradient(135deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%)',
+              }}
+              animate={{
+                x: ['-100%', '100%'],
+              }}
+              transition={{
+                duration: 3,
+                repeat: Infinity,
+                repeatDelay: 2,
+                ease: 'linear',
+              }}
+            />
 
-            <motion.h3 
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="text-2xl font-black text-gray-900 dark:text-white mb-6 bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent relative z-10"
+            <motion.h3
+              initial={{ opacity: 0, y: -10, rotateX: -10 }}
+              animate={{ opacity: 1, y: 0, rotateX: 0 }}
+              transition={{ delay: 0.3, type: "spring" }}
+              className="text-3xl font-black text-white mb-6 bg-gradient-to-r from-orange-300 via-pink-300 to-purple-300 bg-clip-text text-transparent drop-shadow-2xl relative z-10"
+              style={{ transformStyle: 'preserve-3d' }}
             >
               {t('dashboard.financialOverview')}
             </motion.h3>
